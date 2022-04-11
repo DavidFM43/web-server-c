@@ -72,7 +72,7 @@ int main(){
 		} else if(choice == 4){
 
 			printf("Tiempo de viaje medio:");
-			scanf("%d", &avg_travel_time);
+			scanf("%f", &avg_travel_time);
 			// search csv file
 
 		} else if(choice == 5) {
