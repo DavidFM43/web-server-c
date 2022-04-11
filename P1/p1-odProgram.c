@@ -6,6 +6,12 @@
 int main(){
 	int choice = 0;
 	bool running = true;
+
+    int origin_id;
+    int destination_id;
+    int hour;
+    float avg_travel_time;
+
 	printf("%s", "Bienvenido\n\n");
 
 	while(running)
@@ -20,7 +26,6 @@ int main(){
 		scanf("%d", &choice);
 
 		if(choice == 1){
-            int origin_id;
 
             while(true)
 			{
@@ -31,11 +36,10 @@ int main(){
 					// search csv file
 					break;
 				}
-
 				printf("Seleccione un ID entre 1 y 1160. ");
 			}
+			
 		} else if(choice == 2){
-            int destination_id;
 
 			while(true)
 			{
@@ -49,8 +53,8 @@ int main(){
 
 				printf("Seleccione un ID entre 1 y 1160. ");
 			}
+
 		} else if(choice == 3){
-            int hour;
 
 			while(true)
 			{
@@ -64,16 +68,21 @@ int main(){
 
 				printf("Seleccione una hora entre 0 y 23. ");
 			}
+
 		} else if(choice == 4){
-            float avg_travel_time;
 
 			printf("Tiempo de viaje medio:");
 			scanf("%d", &avg_travel_time);
 			// search csv file
+
 		} else if(choice == 5) {
+
             exit(1);
+
 		} else {
+
             printf("Entre una opcion adecuada.\n\n");
+
 		}
 
 	}
