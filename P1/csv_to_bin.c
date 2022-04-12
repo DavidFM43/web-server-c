@@ -36,7 +36,7 @@ void main()
 
         fgets(row, 1024, fp); // dismiss column headers
 
-        while (fgets(row, 1024, fp))
+        while (fgets(row, 1024, fp)) // process each row
         {
             char *value;
             int id_source;
@@ -44,13 +44,14 @@ void main()
             int hour;
             float avg_time;
 
+            // parse to appropiate types
             id_source = atoi(strtok(row, ","));
             id_dest = atoi(strtok(NULL, ","));
             hour = atoi(strtok(NULL, ","));
             avg_time = atof(strtok(NULL, ","));
 
-            struct Ride ride = {id_source, id_dest, hour, avg_time};
-            fwrite(&ride, sizeof(struct Ride), 1, bfp);
+            struct Ride ride = {id_source, id_dest, hour, avg_time}; // build struct
+            fwrite(&ride, sizeof(struct Ride), 1, bfp);              // write struct to bin file
         }
         fclose(bfp);
         fclose(fp);
