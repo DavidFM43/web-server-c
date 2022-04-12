@@ -27,7 +27,7 @@ void main()
     if (fp == NULL)
     {
         printf("Can't open file\n");
-        exit(1);
+        exit(-1);
     }
     else
     {
