@@ -10,12 +10,13 @@
 
 void main()
 {
-    FILE *fp = fopen("travel_data.csv", "r");
+
+    FILE *fp = fopen("test_travel_data.csv", "r");
 
     if (fp == NULL)
     {
         printf("Can't open file\n");
-        exit(1);
+        exit(-1);
     }
     else
     {
