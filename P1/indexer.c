@@ -35,17 +35,16 @@ int main()
             tails_id_source[current_id_source] = current_pos;
             heads_id_source[current_id_source] = current_pos;
         }
-        else // add one to linked list
+        else // append to linked list
         {
-            struct Ride old_tail;                             // previous tail
-            fsetpos(bfp, tails_id_source[current_id_source]); // moves to the infile position on the old tail
-            fread(&old_tail, sizeof(struct Ride), 1, bfp);    // reads the structure
-            old_tail.next_id_source = current_pos;
-
-            fsetpos(bfp, -sizeof(struct Ride));               // moves the infile position back to where the old tail was located
-            fwrite(&old_tail, sizeof(struct Ride), 1, bfp);   // write old tail
-            tails_id_source[current_id_source] = current_pos; // put new tail in the tails array
-            fsetpos(bfp, current_pos + sizeof(struct Ride));  // set infile position back were it was
+            struct Ride old_tail;                                     // previous tail
+            fseek(bfp, tails_id_source[current_id_source], SEEK_SET); // moves to the infile position on the old tail
+            fread(&old_tail, sizeof(struct Ride), 1, bfp);            // reads the structure
+            old_tail.next_id_source = current_pos;                    // set next source id
+            fseek(bfp, -sizeof(struct Ride), SEEK_CUR);               // moves back to where the old tail was located
+            fwrite(&old_tail, sizeof(struct Ride), 1, bfp);           // write old tail
+            tails_id_source[current_id_source] = current_pos;         // put new tail in the tails array
+            fseek(bfp, current_pos + sizeof(struct Ride), SEEK_SET);  // set infile position back were it was
         }
 
         current_pos = ftell(bfp); // change current pos
@@ -57,13 +56,4 @@ int main()
     // close files
     fclose(heads_fp);
     fclose(bfp);
-}
-
-void print_ride(struct Ride ride)
-{
-    printf("Id_source: %d\n", ride.id_source);
-    printf("Id_dest: %d\n", ride.id_dest);
-    printf("Hour: %d\n", ride.hour);
-    printf("Average time : %f\n", ride.avg_time);
-    printf("next: %d\n\n", ride.next_id_source);
 }

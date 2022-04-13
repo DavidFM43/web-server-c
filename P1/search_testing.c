@@ -9,7 +9,7 @@ int main()
 {
     FILE *bfp = fopen("rides.bin", "rb");
     FILE *heads_fp = fopen("source_id_heads.bin", "rb");
-    long heads_id_source[1200] = {0};
+    long heads_id_source[1200];
     int id_tosearch;
     int infile_pos;
     struct Ride ride;
@@ -21,7 +21,7 @@ int main()
 
     if (!heads_fp)
     {
-        printf("Can't open file.\n");
+        printf("Can't open firts poisitions file.\n");
         exit(-1);
     }
 
@@ -43,18 +43,10 @@ int main()
             fread(&ride, sizeof(struct Ride), 1, bfp);
             print_ride(ride);
             infile_pos = ride.next_id_source;
+
         } while (infile_pos != -1);
     }
 
     fclose(bfp);
     fclose(heads_fp);
-}
-
-void print_ride(struct Ride ride)
-{
-    printf("Id_source: %d\n", ride.id_source);
-    printf("Id_dest: %d\n", ride.id_dest);
-    printf("Hour: %d\n", ride.hour);
-    printf("Average time : %f\n", ride.avg_time);
-    printf("next: %d\n\n", ride.next_id_source);
 }
