@@ -23,12 +23,4 @@ void print_ride(Ride *ride)
     printf("Average time : %0.2f\n", ride->avg_time);
 }
 
-// void print_ride(Ride ride)
-// {
-//     printf("Id_source: %d\n", ride.id_source);
-//     printf("Id_dest: %d\n", ride.id_dest);
-//     printf("Hour: %d\n", ride.hour);
-//     printf("Average time : %0.2f\n", ride.avg_time);
-// }
-
 #endif

@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "ride.h"
 
-
 int main()
 {
     FILE *bfp = fopen("rides.bin", "rb");
