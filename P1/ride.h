@@ -1,8 +1,7 @@
-// #ifndef RIDE_H
-// #define RIDE_H
+#ifndef RIDE_H
+#define RIDE_H
 
-struct Ride
-{
+typedef struct Ride {
     int id_source;
     int id_dest;
     int hour;
@@ -12,14 +11,24 @@ struct Ride
     long next_id_dest;
     long next_hour;
     long next_avg_time;
-};
+} Ride;
 
-void print_ride(struct Ride ride)
+
+void print_ride(Ride *ride)
 {
-    printf("Id_source: %d\n", ride.id_source);
-    printf("Id_dest: %d\n", ride.id_dest);
-    printf("Hour: %d\n", ride.hour);
-    printf("Average time : %0.2f\n", ride.avg_time);
+    // TODO null pointer safety
+    printf("Id_source: %d\n", ride->id_source);
+    printf("Id_dest: %d\n", ride->id_dest);
+    printf("Hour: %d\n", ride->hour);
+    printf("Average time : %0.2f\n", ride->avg_time);
 }
 
-// #endif
+// void print_ride(Ride ride)
+// {
+//     printf("Id_source: %d\n", ride.id_source);
+//     printf("Id_dest: %d\n", ride.id_dest);
+//     printf("Hour: %d\n", ride.hour);
+//     printf("Average time : %0.2f\n", ride.avg_time);
+// }
+
+#endif

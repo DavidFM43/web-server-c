@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "ride.h"
 
-void print_ride(struct Ride ride);
 
 int main()
 {
@@ -12,7 +11,7 @@ int main()
     long heads_id_source[1200];
     int id_tosearch;
     int infile_pos;
-    struct Ride ride;
+    Ride ride;
 
     for (int i = 0; i < 1200; i++)
     {
@@ -40,8 +39,8 @@ int main()
         do
         {
             fseek(bfp, infile_pos, SEEK_SET);
-            fread(&ride, sizeof(struct Ride), 1, bfp);
-            print_ride(ride);
+            fread(&ride, sizeof(Ride), 1, bfp);
+            print_ride(&ride);
             infile_pos = ride.next_id_source;
 
         } while (infile_pos != -1);

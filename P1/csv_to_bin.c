@@ -21,13 +21,13 @@ void main()
     else
     {
         FILE *bfp = fopen("rides.bin", "wb");
+        // char *row = malloc(1024 * sizeof(char));
         char row[1024];
 
         fgets(row, 1024, fp); // dismiss column headers
 
         while (fgets(row, 1024, fp)) // process each row
         {
-            char *value;
             int id_source;
             int id_dest;
             int hour;
@@ -39,9 +39,10 @@ void main()
             hour = atoi(strtok(NULL, ","));
             avg_time = atof(strtok(NULL, ","));
 
-            struct Ride ride = {id_source, id_dest, hour, avg_time, -1, -1, -1, -1}; // build struct
-            fwrite(&ride, sizeof(struct Ride), 1, bfp);                              // write struct to bin file
+            Ride ride = {id_source, id_dest, hour, avg_time, -1, -1, -1, -1}; // build struct
+            fwrite(&ride, sizeof(Ride), 1, bfp);                              // write struct to bin file
         }
+        // free(row);
         fclose(bfp);
         fclose(fp);
     }

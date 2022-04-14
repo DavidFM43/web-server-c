@@ -6,13 +6,11 @@
 #include <string.h>
 #include "ride.h"
 
-void print_ride(struct Ride ride);
 
 int main()
 {
-
     FILE *bfp = fopen("rides.bin", "rb+");
-    struct Ride ride;
+    Ride ride;
 
     // this arrays contains
     long heads_id_source[1200]; // heads of the linked lists
@@ -26,7 +24,7 @@ int main()
         heads_id_source[i] = -1;
     }
 
-    while (fread(&ride, sizeof(struct Ride), 1, bfp)) // reads one row at a time and puts it in a Ride struct
+    while (fread(&ride, sizeof(Ride), 1, bfp)) // reads one row at a time and puts it in a Ride struct
     {
         int current_id_source = ride.id_source;
 
@@ -37,14 +35,14 @@ int main()
         }
         else // append to linked list
         {
-            struct Ride old_tail;                                     // previous tail
+            Ride old_tail;                                     // previous tail
             fseek(bfp, tails_id_source[current_id_source], SEEK_SET); // moves to the infile position on the old tail
-            fread(&old_tail, sizeof(struct Ride), 1, bfp);            // reads the structure
+            fread(&old_tail, sizeof(Ride), 1, bfp);            // reads the structure
             old_tail.next_id_source = current_pos;                    // set next source id
             fseek(bfp, -sizeof(struct Ride), SEEK_CUR);               // moves back to where the old tail was located
-            fwrite(&old_tail, sizeof(struct Ride), 1, bfp);           // write old tail
+            fwrite(&old_tail, sizeof(Ride), 1, bfp);           // write old tail
             tails_id_source[current_id_source] = current_pos;         // put new tail in the tails array
-            fseek(bfp, current_pos + sizeof(struct Ride), SEEK_SET);  // set infile position back were it was
+            fseek(bfp, current_pos + sizeof(Ride), SEEK_SET);  // set infile position back were it was
         }
 
         current_pos = ftell(bfp); // change current pos
