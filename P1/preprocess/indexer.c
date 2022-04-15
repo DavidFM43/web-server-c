@@ -10,7 +10,7 @@
 
 void index_file()
 {
-    FILE *bfp = fopen("rides.bin", "rb+");
+    FILE *bfp = fopen("../data/rides.bin", "rb+");
     Ride ride;
 
     int heads_id_source[TABLE_SIZE]; // heads of the linked lists
@@ -48,7 +48,7 @@ void index_file()
         current_pos = ftell(bfp); // change current position
     }
 
-    FILE *heads_fp = fopen("source_id_table.bin", "wb"); // save source ID table in binary file
+    FILE *heads_fp = fopen("../data/source_id_table.bin", "wb"); // save source ID table in binary file
     fwrite(&heads_id_source, sizeof(heads_id_source), 1, heads_fp);
 
     // close files
