@@ -6,7 +6,11 @@ typedef struct Ride {
     int dest_id;
     int hour;
     float avg_time;
+<<<<<<< HEAD
     int next_source_id;
+=======
+    int next_id_source;
+>>>>>>> refs/remotes/origin/indexer
 } Ride;
 
 

@@ -48,7 +48,11 @@ int main()
         current_pos = ftell(bfp); // change current position
     }
 
+<<<<<<< HEAD
     FILE *heads_fp = fopen("source_id_table.bin", "wb"); // save source ID table in binary file
+=======
+    FILE *heads_fp = fopen("source_id_table.bin", "wb");
+>>>>>>> refs/remotes/origin/indexer
     fwrite(&heads_id_source, sizeof(heads_id_source), 1, heads_fp);
 
     // close files
