@@ -2,25 +2,22 @@
 #define RIDE_H
 
 typedef struct Ride {
-    int id_source;
-    int id_dest;
+    int source_id;
+    int dest_id;
     int hour;
     float avg_time;
-
-    long next_id_source;
-    long next_id_dest;
-    long next_hour;
-    long next_avg_time;
+    int next_source_id;
 } Ride;
 
 
 void print_ride(Ride *ride)
 {
     // TODO null pointer safety
-    printf("Id_source: %d\n", ride->id_source);
-    printf("Id_dest: %d\n", ride->id_dest);
+    printf("Source: %d\n", ride->source_id);
+    printf("Id_dest: %d\n", ride->dest_id);
     printf("Hour: %d\n", ride->hour);
     printf("Average time : %0.2f\n", ride->avg_time);
+
 }
 
 #endif

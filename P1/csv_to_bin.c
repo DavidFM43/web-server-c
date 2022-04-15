@@ -2,7 +2,6 @@
  * This program reads the travel_data.csv file, turns each row into a Ride structure
  * and then writes those structures into a binary file named rides.bin
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,28 +20,26 @@ void main()
     else
     {
         FILE *bfp = fopen("rides.bin", "wb");
-        // char *row = malloc(1024 * sizeof(char));
         char row[1024];
 
         fgets(row, 1024, fp); // dismiss column headers
 
         while (fgets(row, 1024, fp)) // process each row
         {
-            int id_source;
-            int id_dest;
+            int source_id;
+            int dest_id;
             int hour;
             float avg_time;
 
             // parse to appropiate types
-            id_source = atoi(strtok(row, ","));
-            id_dest = atoi(strtok(NULL, ","));
+            source_id = atoi(strtok(row, ","));
+            dest_id = atoi(strtok(NULL, ","));
             hour = atoi(strtok(NULL, ","));
             avg_time = atof(strtok(NULL, ","));
 
-            Ride ride = {id_source, id_dest, hour, avg_time, -1, -1, -1, -1}; // build struct
-            fwrite(&ride, sizeof(Ride), 1, bfp);                              // write struct to bin file
+            Ride ride = {source_id, dest_id, hour, avg_time, -1}; // build struct
+            fwrite(&ride, sizeof(Ride), 1, bfp);                  // write struct to bin file
         }
-        // free(row);
         fclose(bfp);
         fclose(fp);
     }
