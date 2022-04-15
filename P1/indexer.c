@@ -1,20 +1,21 @@
 /*
- * Indexes the id_source
+ * Indexes the binary file of structures by source ID. Produces the indexed binary file
+ * and a binary file containing a table of the first positions for each ID.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ride.h"
+#define TABLE_SIZE 1200
 
 int main()
 {
     FILE *bfp = fopen("rides.bin", "rb+");
     Ride ride;
 
-    // this arrays contains
-    long heads_id_source[1200]; // heads of the linked lists
-    long tails_id_source[1200]; // tails of the linked lists
-    long current_pos = 0;       // current file position
+    int heads_id_source[TABLE_SIZE]; // heads of the linked lists
+    int tails_id_source[TABLE_SIZE]; // tails of the linked lists
+    int current_pos = 0;             // current file position
 
     // initalizes the heads and tails in -1
     for (int i = 0; i < 1200; i++)
@@ -47,7 +48,7 @@ int main()
         current_pos = ftell(bfp); // change current pos
     }
 
-    FILE *heads_fp = fopen("source_id_heads.bin", "wb");
+    FILE *heads_fp = fopen("source_id_table.bin", "wb");
     fwrite(&heads_id_source, sizeof(heads_id_source), 1, heads_fp);
 
     // close files
