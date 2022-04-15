@@ -8,7 +8,7 @@
 #include "ride.h"
 #define TABLE_SIZE 1200
 
-int main()
+void index_file()
 {
     FILE *bfp = fopen("rides.bin", "rb+");
     Ride ride;

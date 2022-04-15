@@ -7,7 +7,7 @@
 #include <string.h>
 #include "ride.h"
 
-void main()
+void csv_to_bin()
 {
 
     FILE *fp = fopen("test_travel_data.csv", "r");
