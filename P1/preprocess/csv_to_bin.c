@@ -10,7 +10,7 @@
 void csv_to_bin()
 {
 
-    FILE *fp = fopen("../data/test_travel_data.csv", "r");
+    FILE *fp = fopen("../data/travel_data.csv", "r");
 
     if (fp == NULL)
     {

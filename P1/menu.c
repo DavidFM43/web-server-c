@@ -21,18 +21,18 @@ int main()
 	int destination_id;
 	int hour;
 	float avg_travel_time;
-	//Inicializando la FIFO, el arreglo de envio y ans de recibido
+	// Inicializando la FIFO, el arreglo de envio y ans de recibido
 	int arrSend[3];
 	int fd;
-	int ans[0];
 
-	if(mkfifo("myfifo", 0777) == -1){  //creating fifo file 
-		if(errno != EEXIST) {
-		 	printf("Could not create fifo file\n");
+	if (mkfifo("myfifo", 0777) == -1) // creating fifo file
+	{ 
+		if (errno != EEXIST)
+		{
+			printf("Could not create fifo file\n");
 			return 1;
 		}
 	}
-
 
 	printf("%s", "Bienvenido\n");
 
@@ -64,7 +64,7 @@ int main()
 				}
 				if (origin_id >= 1 && origin_id <= 1160)
 				{
-					arrSend[0] = origin_id; //saving origin_id for then send
+					arrSend[0] = origin_id; // saving origin_id for then send
 					break;
 				}
 				printf("Seleccione un ID entre 1 y 1160.\n");
@@ -84,7 +84,7 @@ int main()
 				}
 				if (destination_id >= 1 && destination_id <= 1160)
 				{
-					arrSend[1] = destination_id; //saving destination_id for then send
+					arrSend[1] = destination_id; // saving destination_id for then send
 					break;
 				}
 				printf("Seleccione un ID entre 1 y 1160. ");
@@ -104,48 +104,48 @@ int main()
 				}
 				if (hour >= 0 && hour <= 23)
 				{
-					arrSend[2] = hour; //saving hour for then send
+					arrSend[2] = hour; // saving hour for then send
 					break;
 				}
 				printf("Seleccione una hora entre 0 y 23.\n");
 			}
 		}
 		else if (choice == 4)
-		{	
-			printf("Abriendo para escribir\n ");
-			fd = open("myfifo", O_WRONLY); //Abrir el archivo para escribir
-				if (fd == -1){ 
-				return 1;
-				}
-
-			if (write(fd, &arrSend, sizeof(arrSend)) == -1){ //Envia el mensaje
-				return 2;
-				} 
-;
-			close(fd);
-
-			printf("Abriendo para leer");
-			//Apertura para leer el tiempo medio de viaje
-			fd = open("myfifo", O_RDONLY); //Abrir el archivo para lectura
+		{
+			printf("Abriendo para escribir.\n ");
+			fd = open("myfifo", O_WRONLY); // Abrir el archivo para escribir
 			if (fd == -1)
 			{
-				return 1;
+				return 1; // can't open pipe
 			}
-			if (read(fd, &ans[0], sizeof(ans[0])) == -1){ //leyendo
-					return 2;
-				}
-			else{
-				printf("tiempo medio de viaje%d\n", ans[0]);
+
+			if (write(fd, &arrSend, sizeof(arrSend)) == -1)
+			{			  // Envia el mensaje
+				return 2; // can't write from pipe
 			}
+
 			close(fd);
 
-
-
+			printf("Abriendo para leer.\n");
+			// Apertura para leer el tiempo medio de viaje
+			fd = open("myfifo", O_RDONLY); // Abrir el archivo para lectura
+			if (fd == -1)
+			{
+				return 1; // can't open pipe
+			}
+			if (read(fd, &avg_travel_time, sizeof(float)) == -1)
+			{			  // leyendo
+				return 2; // can't read from pipe
+			}
+			else
+			{
+				printf("El tiempo medio de viaje es: %0.2f\n", avg_travel_time);
+			}
+			close(fd);
 		}
 		else if (choice == 5)
 		{
 			exit(1);
-			 
 		}
 		else
 		{

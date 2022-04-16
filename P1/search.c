@@ -28,9 +28,11 @@ int main(){
 
     // initialize table
     int source_id_table[TABLE_SIZE];
-    for (int i = 0; i < 1200; i++)
+    for (int i = 0; i < 1200; i++){
         source_id_table[i] = -1;
+    } 
     
+    // load source id table
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
     // seach parameters
@@ -41,10 +43,11 @@ int main(){
     int infile_pos;
     bool found;
 
-    //Inicializando la FIFO, el arreglo de recibido y paquete de envio
+    // Inicializando la FIFO, el arreglo de recibido y paquete de envio
     int arrArrival[3];
     int fd;
-    int ans[0];
+    float avg_travel_time;
+
     // create pipe
     if (mkfifo("myfifo", 0777) == -1)
     { // creating fifo file
@@ -90,13 +93,13 @@ int main(){
                 // send average time
                 // printf("Tiempo de viaje medio %f\n\n", ride->avg_time);
 
-                ans[0] = ride->avg_time; //guardando el tiempo medio de viaje
-                printf("Abriendo archivo para escritura");
+                avg_travel_time = ride->avg_time; // guardando el tiempo medio de viaje
+                printf("Abriendo archivo para escritura\n.");
                 fd = open("myfifo", O_WRONLY); //Abriendo archivo para escritura
-                if(write(fd, &ans[0],sizeof(int)) == -1){
+                if(write(fd, &avg_travel_time, sizeof(float)) == -1){
                     return 2;
                 }
-                close(fd); //Cerramoms el archivo de envio 
+                close(fd); //Cerramos el archivo de envio 
                 found = true;
                 break;
             }
