@@ -1,4 +1,20 @@
+# rides csv data
 travel_data.csv
+
+# testing 
 structs_testing.c
+test.c
+
+# binaries
+
+indexer
 structs_testing
+search_testing
 csv_to_bin
+p1-odProgram
+
+rides.bin
+source_id_heads.bin
+
+# dotfiles
+.vscode/

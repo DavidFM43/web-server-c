@@ -1,60 +1,76 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "ride.h"
-
-void print_ride(struct Ride ride);
+#define TABLE_SIZE 1200
 
 int main()
 {
+
+    // open files
     FILE *bfp = fopen("rides.bin", "rb");
-    FILE *heads_fp = fopen("source_id_heads.bin", "rb");
-    long heads_id_source[1200] = {0};
-    int id_tosearch;
-    int infile_pos;
-    struct Ride ride;
-
-    for (int i = 0; i < 1200; i++)
+    FILE *source_id_table_file = fopen("source_id_table.bin", "rb");
+    if (source_id_table_file == NULL || bfp == NULL)
     {
-        heads_id_source[i] = -1;
-    }
-
-    if (!heads_fp)
-    {
-        printf("Can't open file.\n");
+        printf("Can't open files.\n");
         exit(-1);
     }
 
-    fread(&heads_id_source, sizeof(heads_id_source), 1, heads_fp);
+    // initialize table
+    int source_id_table[TABLE_SIZE];
+    for (int i = 0; i < 1200; i++)
+        source_id_table[i] = -1;
+    fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
-    printf("Ingrese ID del origen:");
-    scanf("%d", &id_tosearch);
+    // seach parameters
+    int source_id;
+    int dest_id;
+    int hour;
+    Ride *ride = malloc(sizeof(Ride));
 
-    if (heads_id_source[id_tosearch] == -1)
+    int infile_pos;
+    bool found;
+
+    do
     {
-        printf("No rides with desired source ID.\n");
-    }
-    else
-    {
-        infile_pos = heads_id_source[id_tosearch];
-        do
+        // menu prompt
+        printf("Ingrese ID del origen: ");
+        scanf("%d", &source_id);
+        printf("Ingrese ID del destino: ");
+        scanf("%d", &dest_id);
+        printf("Ingrese la hora: ");
+        scanf("%d", &hour);
+
+        if (source_id_table[source_id] == -1)
         {
-            fseek(bfp, infile_pos, SEEK_SET);
-            fread(&ride, sizeof(struct Ride), 1, bfp);
-            print_ride(ride);
-            infile_pos = ride.next_id_source;
-        } while (infile_pos != -1);
-    }
+            printf("NA.\n");
+        }
+        else
+        {
+            infile_pos = source_id_table[source_id];
+            found = false;
+            do // search through the linked list of the source ID 
+            {
+                fseek(bfp, infile_pos, SEEK_SET);
+                fread(ride, sizeof(Ride), 1, bfp);
+                if (ride->hour == hour && ride->dest_id == dest_id)
+                {
+                    printf("Tiempo de viaje medio %f\n\n", ride->avg_time);
+                    found = true;
+                }
+                infile_pos = ride->next_source_id;
 
+            } while (infile_pos != -1);
+
+            if (!found)
+            {
+                printf("NA.\n\n");
+            }
+        }
+    } while (true);
+
+    free(ride);
     fclose(bfp);
-    fclose(heads_fp);
-}
-
-void print_ride(struct Ride ride)
-{
-    printf("Id_source: %d\n", ride.id_source);
-    printf("Id_dest: %d\n", ride.id_dest);
-    printf("Hour: %d\n", ride.hour);
-    printf("Average time : %f\n", ride.avg_time);
-    printf("next: %d\n\n", ride.next_id_source);
+    fclose(source_id_table_file);
 }
