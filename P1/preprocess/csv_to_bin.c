@@ -7,10 +7,10 @@
 #include <string.h>
 #include "ride.h"
 
-void main()
+void csv_to_bin()
 {
 
-    FILE *fp = fopen("test_travel_data.csv", "r");
+    FILE *fp = fopen("../data/test_travel_data.csv", "r");
 
     if (fp == NULL)
     {
@@ -19,7 +19,7 @@ void main()
     }
     else
     {
-        FILE *bfp = fopen("rides.bin", "wb");
+        FILE *bfp = fopen("../data/rides.bin", "wb");
         char row[1024];
 
         fgets(row, 1024, fp); // dismiss column headers
