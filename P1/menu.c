@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+#include <unistd.h>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
@@ -19,9 +21,10 @@ int main()
 	int destination_id;
 	int hour;
 	float avg_travel_time;
-
+	//Inicializando la FIFO, el arreglo de envio y ans de recibido
 	int arrSend[3];
 	int fd;
+	int ans[0];
 
 	if(mkfifo("myfifo", 0777) == -1){  //creating fifo file 
 		if(errno != EEXIST) {
@@ -35,11 +38,8 @@ int main()
 
 	while (true)
 	{
-		Menu();
 
-		fd = open("myfifo", O_WRONLY);
-		if (fd == -1){ //depuration
-		return 1;
+		Menu();
 
 		while (scanf("%d", &choice) != 1) // handling of  wrong input type
 		{
@@ -112,18 +112,40 @@ int main()
 		}
 		else if (choice == 4)
 		{	
-			if (write(fd, arrSend, sizeof(arrSend)) == -1){ //writting in the FIFO
-				return 2; //depuration
-			}
-			float d;
-			printf("Tiempo de viaje medio: ");
-			scanf("%f", &avg_travel_time);
+			printf("Abriendo para escribir\n ");
+			fd = open("myfifo", O_WRONLY); //Abrir el archivo para escribir
+				if (fd == -1){ 
+				return 1;
+				}
+
+			if (write(fd, &arrSend, sizeof(arrSend)) == -1){ //Envia el mensaje
+				return 2;
+				} 
+;
 			close(fd);
+
+			printf("Abriendo para leer");
+			//Apertura para leer el tiempo medio de viaje
+			fd = open("myfifo", O_RDONLY); //Abrir el archivo para lectura
+			if (fd == -1)
+			{
+				return 1;
+			}
+			if (read(fd, &ans[0], sizeof(ans[0])) == -1){ //leyendo
+					return 2;
+				}
+			else{
+				printf("tiempo medio de viaje%d\n", ans[0]);
+			}
+			close(fd);
+
+
+
 		}
 		else if (choice == 5)
 		{
 			exit(1);
-			close(fd); 
+			 
 		}
 		else
 		{

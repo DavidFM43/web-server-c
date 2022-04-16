@@ -5,16 +5,19 @@
 #include "ride.h"
 #define TABLE_SIZE 1200
 
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <time.h>
 
-int main()
-{
+int main(){
+
+
 
     // open files
-    FILE *bfp = fopen("data/travel_data.bin", "rb");
+    FILE *bfp = fopen("data/rides.bin", "rb");
     FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
 
     if (bfp == NULL || source_id_table_file == NULL)
@@ -27,6 +30,7 @@ int main()
     int source_id_table[TABLE_SIZE];
     for (int i = 0; i < 1200; i++)
         source_id_table[i] = -1;
+    
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
     // seach parameters
@@ -36,10 +40,13 @@ int main()
     Ride *ride = malloc(sizeof(Ride));
     int infile_pos;
     bool found;
-    int arrSend[3];
 
+    //Inicializando la FIFO, el arreglo de recibido y paquete de envio
+    int arrArrival[3];
+    int fd;
+    int ans[0];
     // create pipe
-    if (mkfifo("myfifo", 0666) == -1)
+    if (mkfifo("myfifo", 0777) == -1)
     { // creating fifo file
         if (errno != EEXIST)
         {
@@ -47,13 +54,24 @@ int main()
             return 1;
         }
     }
-
-    int fd = open("myfifo", O_RDONLY); // Inicializando la ruta y haciendo la apertura para escribir
+    printf("Abriendo archivo para lectura...\n");
+    fd = open("myfifo", O_RDONLY); //Abrir el archivo para lectura
     if (fd == -1)
     {
         return 1;
     }
+    if (read(fd, &arrArrival, sizeof(arrArrival)) == -1){ //leyendo
+            return 2;
+        }
 
+    
+    source_id = arrArrival[0];
+    dest_id = arrArrival[1];
+    hour = arrArrival[2];
+    printf("Aquí ya esta leido\n");
+    close(fd);//Cierre del archivo para lectura
+    
+    printf("%d %d %d ", source_id, dest_id, hour); 
     // seach procedure
     if (source_id_table[source_id] == -1)
     {
@@ -64,13 +82,21 @@ int main()
         infile_pos = source_id_table[source_id];
         found = false;
         do // search through the linked list of the source ID
-        {
+        {   
             fseek(bfp, infile_pos, SEEK_SET);
             fread(ride, sizeof(Ride), 1, bfp);
             if (ride->hour == hour && ride->dest_id == dest_id)
             {
                 // send average time
                 // printf("Tiempo de viaje medio %f\n\n", ride->avg_time);
+
+                ans[0] = ride->avg_time; //guardando el tiempo medio de viaje
+                printf("Abriendo archivo para escritura");
+                fd = open("myfifo", O_WRONLY); //Abriendo archivo para escritura
+                if(write(fd, &ans[0],sizeof(int)) == -1){
+                    return 2;
+                }
+                close(fd); //Cerramoms el archivo de envio 
                 found = true;
                 break;
             }
@@ -90,3 +116,4 @@ int main()
         fclose(bfp);
         fclose(source_id_table_file);
     }
+}
