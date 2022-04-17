@@ -12,25 +12,24 @@
 #include <fcntl.h>
 #include <time.h>
 
-int main(){
-
-
+int main()
+{
 
     // open files
     FILE *bfp = fopen("data/rides.bin", "rb");
     FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
-
-    if (bfp == NULL || source_id_table_file == NULL){
+    if (bfp == NULL || source_id_table_file == NULL)
+    {
         printf("Can't open files");
         exit(-1);
     }
 
     // initialize table
     int source_id_table[TABLE_SIZE];
-    for (int i = 0; i < 1200; i++){
+    for (int i = 0; i < 1200; i++)
+    {
         source_id_table[i] = -1;
-    } 
-    
+    }
     // load source id table
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
@@ -38,7 +37,6 @@ int main(){
     int source_id;
     int dest_id;
     int hour;
-    Ride *ride = malloc(sizeof(Ride));
     int infile_pos;
     bool found;
 
@@ -49,77 +47,96 @@ int main(){
 
     // create pipe
     if (mkfifo("myfifo", 0777) == -1)
-    { // creating fifo file
+    {
         if (errno != EEXIST)
         {
             printf("Could not create fifo file\n");
             return 1;
         }
     }
-    printf("Abriendo archivo para lectura...\n");
-    fd = open("myfifo", O_RDONLY); //Abrir el archivo para lectura
-    if (fd == -1)
+
+    while (true)
     {
-        return 1;
-    }
-    if (read(fd, &arrArrival, sizeof(arrArrival)) == -1){ //leyendo
-            return 2;
+        printf("Abriendo archivo para lectura...\n");
+        fd = open("myfifo", O_RDONLY); // Open pipe for reading
+        if (fd == -1)
+        {
+            printf("Can't open pipe from reading.\n");
+            return 1;
+        }
+        if (read(fd, &arrArrival, sizeof(arrArrival)) == -1)
+        { // read attributes to arrArrival array
+            printf("Can't read from pipe\n");
+            return 2; // read error
         }
 
-    
-    source_id = arrArrival[0];
-    dest_id = arrArrival[1];
-    hour = arrArrival[2];
-    printf("Aquí ya esta leido\n");
-    close(fd);//Cierre del archivo para lectura
-    
-    printf("%d %d %d\n", source_id, dest_id, hour); 
-    // seach procedure
-    if (source_id_table[source_id] == -1)
-    {
-        // send NA
-    }
-    else
-    {
-        infile_pos = source_id_table[source_id];
-        found = false;
-        do // search through the linked list of the source ID
-        {   
-            fseek(bfp, infile_pos, SEEK_SET);
-            fread(ride, sizeof(Ride), 1, bfp);
-            if (ride->hour == hour && ride->dest_id == dest_id)
-            {
-                // send average time
-                // printf("Tiempo de viaje medio %f\n\n", ride->avg_time);
+        // Almacenando los datos de envio
+        source_id = arrArrival[0];
+        dest_id = arrArrival[1];
+        hour = arrArrival[2];
+        Ride *ride = malloc(sizeof(Ride)); // reservar memoria
+        printf("Aquí ya esta leido\n");
+        close(fd); // Close pipe
 
-                avg_travel_time = ride->avg_time; // guardando el tiempo medio de viaje
-                printf("Abriendo archivo para escritura\n.");
-                fd = open("myfifo", O_WRONLY); //Abriendo archivo para escritura
-                if(write(fd, &avg_travel_time, sizeof(float)) == -1){
-                    return 2;
-                }
-                close(fd); //Cerramos el archivo de envio 
-                found = true;
-                break;
-            }
-            infile_pos = ride->next_source_id;
+        printf("Criterios: %d, %d, %d\n", source_id, dest_id, hour);
 
-        } while (infile_pos != -1);
-
-        if (!found) {
-			avg_travel_time = -1.0; // guardando -1
+        // seach procedure
+        if (source_id_table[source_id] == -1)
+        {
+            // No rides with that source id
+            avg_travel_time = -1.0;
             printf("Abriendo archivo para escritura. \n");
-            fd = open("myfifo", O_WRONLY); //Abriendo archivo para escritura
-            if(write(fd, &avg_travel_time, sizeof(float)) == -1){
+            fd = open("myfifo", O_WRONLY);
+            if (write(fd, &avg_travel_time, sizeof(float)) == -1)
+            {
+                printf("Can't write in pipe.");
                 return 2;
             }
-            close(fd); //Cerramos el archivo de envio 
+            close(fd); // Cerramos el archivo de envio
+            break;
         }
+        else
+        {
+            infile_pos = source_id_table[source_id];
+            found = false;
+            do // search through the linked list of the source ID
+            {
+                fseek(bfp, infile_pos, SEEK_SET);
+                fread(ride, sizeof(Ride), 1, bfp);
+                if (ride->hour == hour && ride->dest_id == dest_id)
+                {
+                    // send average time
 
-        free(ride);
+                    avg_travel_time = ride->avg_time; // guardando el tiempo medio de viaje
+                    printf("Abriendo archivo para escritura\n.");
+                    fd = open("myfifo", O_WRONLY); // Abriendo archivo para escritura
+                    if (write(fd, &avg_travel_time, sizeof(float)) == -1)
+                    {
+                        return 2;
+                    }
+                    close(fd); // Cerramos el archivo de envio
+                    found = true;
+                    break;
+                }
+                infile_pos = ride->next_source_id;
 
-        // close when program ends
+            } while (infile_pos != -1);
+
+            if (!found)
+            {
+                avg_travel_time = -1.0; // guardando -1
+                printf("Abriendo archivo para escritura. \n");
+                fd = open("myfifo", O_WRONLY); // Abriendo archivo para escritura
+                if (write(fd, &avg_travel_time, sizeof(float)) == -1)
+                {
+                    return 2;
+                }
+                close(fd); // Cerramos el archivo de envio
+            }
+
+            free(ride);
+        }
+    }//Hasta aquí va el while
         fclose(bfp);
         fclose(source_id_table_file);
-    }
 }

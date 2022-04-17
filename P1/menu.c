@@ -20,7 +20,7 @@ int main(){
 	int hour;
 	float avg_travel_time;
 	// Inicializando la FIFO, el arreglo de envio y ans de recibido
-	int arrSend[3];
+	int arrSend[3]; //
 	int fd;
 
 	if (mkfifo("myfifo", 0777) == -1){  // creating fifo file 
