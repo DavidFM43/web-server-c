@@ -33,14 +33,14 @@ int main()
     // load source id table
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
-    // seach parameters
+    // seach variables
     int source_id;
     int dest_id;
     int hour;
+    // searching variables
     int infile_pos;
     bool found;
-
-    // Inicializando la FIFO, el arreglo de recibido y paquete de envio
+    // fifo variables
     int arrArrival[3];
     int fd;
     float avg_travel_time;
@@ -58,32 +58,35 @@ int main()
     while (true)
     {
         printf("Abriendo archivo para lectura...\n");
-        fd = open("myfifo", O_RDONLY); // Open pipe for reading
+        fd = open("myfifo", O_RDONLY); // open pipe for reading
         if (fd == -1)
         {
             printf("Can't open pipe from reading.\n");
             return 1;
         }
-        if (read(fd, &arrArrival, sizeof(arrArrival)) == -1)
-        { // read attributes to arrArrival array
-            printf("Can't read from pipe\n");
-            return 2; // read error
+        if (read(fd, &arrArrival, sizeof(arrArrival)) == -1) // read attributes to arrArrival array
+        { 
+            printf("Can't read from pipe.\n");
+            return 2; 
         }
 
-        // Almacenando los datos de envio
+        if(arrArrival[0] == -1){
+            return 0;
+        }
+
+        // save arrival data on corresponding variables
         source_id = arrArrival[0];
         dest_id = arrArrival[1];
         hour = arrArrival[2];
-        Ride *ride = malloc(sizeof(Ride)); // reservar memoria
+        Ride *ride = malloc(sizeof(Ride)); // allocate memory for Ride struct
         printf("Aquí ya esta leido\n");
-        close(fd); // Close pipe
+        close(fd); // close pipe
 
         printf("Criterios: %d, %d, %d\n", source_id, dest_id, hour);
 
-        // seach procedure
-        if (source_id_table[source_id] == -1)
+        // start search procedure
+        if (source_id_table[source_id] == -1) // no rides with that source id
         {
-            // No rides with that source id
             avg_travel_time = -1.0;
             printf("Abriendo archivo para escritura. \n");
             fd = open("myfifo", O_WRONLY);
@@ -92,7 +95,7 @@ int main()
                 printf("Can't write in pipe.");
                 return 2;
             }
-            close(fd); // Cerramos el archivo de envio
+            close(fd); // close pipe
             break;
         }
         else
@@ -103,18 +106,17 @@ int main()
             {
                 fseek(bfp, infile_pos, SEEK_SET);
                 fread(ride, sizeof(Ride), 1, bfp);
-                if (ride->hour == hour && ride->dest_id == dest_id)
+                if (ride->hour == hour && ride->dest_id == dest_id) // checks criteria
                 {
-                    // send average time
-
-                    avg_travel_time = ride->avg_time; // guardando el tiempo medio de viaje
-                    printf("Abriendo archivo para escritura\n.");
-                    fd = open("myfifo", O_WRONLY); // Abriendo archivo para escritura
+                    avg_travel_time = ride->avg_time; // save average travel time
+                    printf("Abriendo archivo para escritura.\n.");
+                    fd = open("myfifo", O_WRONLY); // open pipe
                     if (write(fd, &avg_travel_time, sizeof(float)) == -1)
                     {
+                        printf("Can't write in pipe.\n");
                         return 2;
                     }
-                    close(fd); // Cerramos el archivo de envio
+                    close(fd); // close pipe
                     found = true;
                     break;
                 }
@@ -124,19 +126,19 @@ int main()
 
             if (!found)
             {
-                avg_travel_time = -1.0; // guardando -1
+                avg_travel_time = -1.0; 
                 printf("Abriendo archivo para escritura. \n");
-                fd = open("myfifo", O_WRONLY); // Abriendo archivo para escritura
+                fd = open("myfifo", O_WRONLY); // open pipe
                 if (write(fd, &avg_travel_time, sizeof(float)) == -1)
                 {
+                    printf("Can't write in pipe.\n");
                     return 2;
                 }
-                close(fd); // Cerramos el archivo de envio
+                close(fd); // close pipe
             }
-
-            free(ride);
+            free(ride); // free memory from ride struct
         }
-    }//Hasta aquí va el while
+    }
         fclose(bfp);
         fclose(source_id_table_file);
 }

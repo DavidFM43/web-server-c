@@ -11,8 +11,8 @@
 void Menu();
 
 int main(){
-	char choice;
-	int c;
+	// char choice;
+	// int c;
 	bool flag = true;
 
 	int origin_id;
@@ -20,7 +20,7 @@ int main(){
 	int hour;
 	float avg_travel_time;
 	// Inicializando la FIFO, el arreglo de envio y ans de recibido
-	int arrSend[3]; //
+	int arrSend[3] = {-2,-2,-2}; //-2 means no data
 	int fd;
 
 	if (mkfifo("myfifo", 0777) == -1){  // creating fifo file 
@@ -95,6 +95,10 @@ int main(){
                 }
                 break;
             case '4':
+                if (arrSend[0] == -2 || arrSend[1] == -2 || arrSend[2] == -2) { //condition in case no data is entered
+                    printf("Por favor ingrese los datos.");
+                    continue;
+                }
 				printf("Abriendo para escribir.\n ");
 				fd = open("myfifo", O_WRONLY); // Abrir el archivo para escribir
 				if (fd == -1){
@@ -125,6 +129,22 @@ int main(){
 				close(fd);
                 break;
             case '5':
+                //sending -1 to close the program
+                arrSend[0] = -1;
+                arrSend[1] = -1;
+                arrSend[2] = -1; //Es necesario cambiar todos?
+                printf("Abriendo para escribir.\n ");
+				fd = open("myfifo", O_WRONLY); // Abrir el archivo para escribir
+				if (fd == -1){
+					return 1; // can't open pipe
+				}
+
+				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ // Envia el mensaje
+					return 2; // can't write from pipe
+				}
+
+				close(fd);
+
                 flag = false;
                 break;
         }
