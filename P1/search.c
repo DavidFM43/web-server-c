@@ -17,11 +17,10 @@ int main(){
 
 
     // open files
-    FILE *bfp = fopen("data/rides.bin", "rb");
-    FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
+    FILE *bfp = fopen("rides.bin", "rb");
+    FILE *source_id_table_file = fopen("source_id_table.bin", "rb");
 
-    if (bfp == NULL || source_id_table_file == NULL)
-    {
+    if (bfp == NULL || source_id_table_file == NULL){
         printf("Can't open files");
         exit(-1);
     }
@@ -107,10 +106,14 @@ int main(){
 
         } while (infile_pos != -1);
 
-        if (!found)
-        {
-            // send NA
-            // printf("NA.\n\n");
+        if (!found) {
+			avg_travel_time = -1.0; // guardando -1
+            printf("Abriendo archivo para escritura. \n");
+            fd = open("myfifo", O_WRONLY); //Abriendo archivo para escritura
+            if(write(fd, &avg_travel_time, sizeof(float)) == -1){
+                return 2;
+            }
+            close(fd); //Cerramos el archivo de envio 
         }
 
         free(ride);
