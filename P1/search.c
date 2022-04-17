@@ -17,8 +17,8 @@ int main(){
 
 
     // open files
-    FILE *bfp = fopen("rides.bin", "rb");
-    FILE *source_id_table_file = fopen("source_id_table.bin", "rb");
+    FILE *bfp = fopen("data/rides.bin", "rb");
+    FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
 
     if (bfp == NULL || source_id_table_file == NULL){
         printf("Can't open files");
@@ -73,7 +73,7 @@ int main(){
     printf("Aquí ya esta leido\n");
     close(fd);//Cierre del archivo para lectura
     
-    printf("%d %d %d ", source_id, dest_id, hour); 
+    printf("%d %d %d\n", source_id, dest_id, hour); 
     // seach procedure
     if (source_id_table[source_id] == -1)
     {
