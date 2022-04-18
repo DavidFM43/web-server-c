@@ -1,16 +1,17 @@
 //Del código
 
-Hacer el bucle en search 
-Resultado NULL 
+Hacer el bucle en search (listo)
+Resultado NULL  (listo)
+Quitarle los prints al search(listo)
+makefile para el archivo principal (listo)
 //Programa en general
 
-dos terminales**
+dos terminales** con ->&
 Como medir memoria
 push todo para jj
 Terminar make file y read
 //Detalles para arreglar
 
-Hacer la tuberias desde el makefile
 
 //Dudas
 Preguntar cual proceso hay que medir

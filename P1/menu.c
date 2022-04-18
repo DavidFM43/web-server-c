@@ -11,16 +11,15 @@
 void Menu();
 
 int main(){
-	// char choice;
-	// int c;
 	bool flag = true;
 
+    // ride variables
 	int origin_id;
 	int destination_id;
 	int hour;
 	float avg_travel_time;
-	// Inicializando la FIFO, el arreglo de envio y ans de recibido
-	int arrSend[3] = {-2,-2,-2}; //-2 means no data
+    // pipes variables
+	int arrSend[3] = {-2,-2,-2}; // -2 means no data
 	int fd;
 
 	if (mkfifo("myfifo", 0777) == -1){  // creating fifo file 
@@ -33,6 +32,7 @@ int main(){
 	printf("%s", "Bienvenido\n");
 
 	while (flag){
+        
 		Menu();
         char s[100];
 		char buf[128];
@@ -95,29 +95,26 @@ int main(){
                 }
                 break;
             case '4':
-                if (arrSend[0] == -2 || arrSend[1] == -2 || arrSend[2] == -2) { //condition in case no data is entered
-                    printf("Por favor ingrese los datos.");
+                if (arrSend[0] == -2 || arrSend[1] == -2 || arrSend[2] == -2) { // incomplete data
+                    printf("Por favor ingrese todos los datos de nuevo.");
                     continue;
                 }
-				printf("Abriendo para escribir.\n ");
-				fd = open("myfifo", O_WRONLY); // Abrir el archivo para escribir
+				fd = open("myfifo", O_WRONLY); // open pipe for writing
 				if (fd == -1){
 					return 1; // can't open pipe
 				}
 
-				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ // Envia el mensaje
+				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ 
 					return 2; // can't write from pipe
 				}
 
 				close(fd);
 
-				printf("Abriendo para leer.\n");
-				// Apertura para leer el tiempo medio de viaje
-				fd = open("myfifo", O_RDONLY); // Abrir el archivo para lectura
+				fd = open("myfifo", O_RDONLY); // open pipe for reading
 				if (fd == -1){
 					return 1; // can't open pipe
 				}
-				if (read(fd, &avg_travel_time, sizeof(float)) == -1){ // leyendo
+				if (read(fd, &avg_travel_time, sizeof(float)) == -1){ 
 					return 2; // can't read from pipe
 				} else {
 					if(avg_travel_time == -1.00){
@@ -127,19 +124,21 @@ int main(){
 					}
 				}
 				close(fd);
+                arrSend[0]=-2;
+                arrSend[1]=-2;
+                arrSend[2]=-2;
                 break;
             case '5':
-                //sending -1 to close the program
+                // sending -1 to close the program
                 arrSend[0] = -1;
                 arrSend[1] = -1;
-                arrSend[2] = -1; //Es necesario cambiar todos?
-                printf("Abriendo para escribir.\n ");
-				fd = open("myfifo", O_WRONLY); // Abrir el archivo para escribir
+                arrSend[2] = -1; 
+				fd = open("myfifo", O_WRONLY); // open pipe for writing
 				if (fd == -1){
 					return 1; // can't open pipe
 				}
 
-				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ // Envia el mensaje
+				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ 
 					return 2; // can't write from pipe
 				}
 

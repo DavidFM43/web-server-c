@@ -57,7 +57,7 @@ int main()
 
     while (true)
     {
-        printf("Abriendo archivo para lectura...\n");
+        
         fd = open("myfifo", O_RDONLY); // open pipe for reading
         if (fd == -1)
         {
@@ -70,7 +70,7 @@ int main()
             return 2; 
         }
 
-        if(arrArrival[0] == -1){
+        if(arrArrival[0] == -1){ //arrival exit
             return 0;
         }
 
@@ -79,16 +79,15 @@ int main()
         dest_id = arrArrival[1];
         hour = arrArrival[2];
         Ride *ride = malloc(sizeof(Ride)); // allocate memory for Ride struct
-        printf("Aquí ya esta leido\n");
         close(fd); // close pipe
 
-        printf("Criterios: %d, %d, %d\n", source_id, dest_id, hour);
+    
 
         // start search procedure
         if (source_id_table[source_id] == -1) // no rides with that source id
         {
             avg_travel_time = -1.0;
-            printf("Abriendo archivo para escritura. \n");
+            // printf("Abriendo archivo para escritura. \n");
             fd = open("myfifo", O_WRONLY);
             if (write(fd, &avg_travel_time, sizeof(float)) == -1)
             {
@@ -109,7 +108,6 @@ int main()
                 if (ride->hour == hour && ride->dest_id == dest_id) // checks criteria
                 {
                     avg_travel_time = ride->avg_time; // save average travel time
-                    printf("Abriendo archivo para escritura.\n.");
                     fd = open("myfifo", O_WRONLY); // open pipe
                     if (write(fd, &avg_travel_time, sizeof(float)) == -1)
                     {
@@ -127,7 +125,6 @@ int main()
             if (!found)
             {
                 avg_travel_time = -1.0; 
-                printf("Abriendo archivo para escritura. \n");
                 fd = open("myfifo", O_WRONLY); // open pipe
                 if (write(fd, &avg_travel_time, sizeof(float)) == -1)
                 {
