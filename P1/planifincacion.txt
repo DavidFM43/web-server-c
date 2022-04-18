@@ -1,0 +1,17 @@
+//Del código
+
+Hacer el bucle en search (listo)
+Resultado NULL  (listo)
+Quitarle los prints al search(listo)
+makefile para el archivo principal (listo)
+//Programa en general
+
+dos terminales** con ->&
+Como medir memoria
+push todo para jj
+Terminar make file y read
+//Detalles para arreglar
+
+
+//Dudas
+Preguntar cual proceso hay que medir

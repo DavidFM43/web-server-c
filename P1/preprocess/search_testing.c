@@ -9,8 +9,8 @@ int main()
 {
 
     // open files
-    FILE *bfp = fopen("rides.bin", "rb");
-    FILE *source_id_table_file = fopen("source_id_table.bin", "rb");
+    FILE *bfp = fopen("../data/rides.bin", "rb");
+    FILE *source_id_table_file = fopen("../data/source_id_table.bin", "rb");
     if (source_id_table_file == NULL || bfp == NULL)
     {
         printf("Can't open files.\n");
