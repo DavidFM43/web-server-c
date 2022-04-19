@@ -14,7 +14,6 @@
 
 int main()
 {
-
     // open files
     FILE *bfp = fopen("data/rides.bin", "rb");
     FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
@@ -30,34 +29,36 @@ int main()
     {
         source_id_table[i] = -1;
     }
+
     // load source id table
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
-    // seach variables
+    // search variables
     int source_id;
     int dest_id;
     int hour;
+    float avg_travel_time;
     // searching variables
     int infile_pos;
     bool found;
     // fifo variables
     int arrArrival[3];
     int fd;
-    float avg_travel_time;
 
     // create pipe
     if (mkfifo("myfifo", 0777) == -1)
     {
         if (errno != EEXIST)
         {
-            printf("Could not create fifo file\n");
+            printf("Could not create fifo file.\n");
             return 1;
         }
     }
 
     while (true)
     {
-        
+        // receives data from user interface process
+
         fd = open("myfifo", O_RDONLY); // open pipe for reading
         if (fd == -1)
         {
@@ -65,12 +66,17 @@ int main()
             return 1;
         }
         if (read(fd, &arrArrival, sizeof(arrArrival)) == -1) // read attributes to arrArrival array
-        { 
+        {
             printf("Can't read from pipe.\n");
-            return 2; 
+            return 2;
         }
+        close(fd); // close pipe
 
-        if(arrArrival[0] == -1){ //arrival exit
+        if (arrArrival[0] == -1) // program termination flag
+        {
+            // close files
+            fclose(bfp);
+            fclose(source_id_table_file);
             return 0;
         }
 
@@ -79,16 +85,12 @@ int main()
         dest_id = arrArrival[1];
         hour = arrArrival[2];
         Ride *ride = malloc(sizeof(Ride)); // allocate memory for Ride struct
-        close(fd); // close pipe
-
-    
 
         // start search procedure
         if (source_id_table[source_id] == -1) // no rides with that source id
         {
-            avg_travel_time = -1.0;
-            // printf("Abriendo archivo para escritura. \n");
-            fd = open("myfifo", O_WRONLY);
+            avg_travel_time = -1.0;        // NA flag
+            fd = open("myfifo", O_WRONLY); // open pipe
             if (write(fd, &avg_travel_time, sizeof(float)) == -1)
             {
                 printf("Can't write in pipe.");
@@ -108,7 +110,7 @@ int main()
                 if (ride->hour == hour && ride->dest_id == dest_id) // checks criteria
                 {
                     avg_travel_time = ride->avg_time; // save average travel time
-                    fd = open("myfifo", O_WRONLY); // open pipe
+                    fd = open("myfifo", O_WRONLY);    // open pipe
                     if (write(fd, &avg_travel_time, sizeof(float)) == -1)
                     {
                         printf("Can't write in pipe.\n");
@@ -124,7 +126,7 @@ int main()
 
             if (!found)
             {
-                avg_travel_time = -1.0; 
+                avg_travel_time = -1.0;        // NA flag
                 fd = open("myfifo", O_WRONLY); // open pipe
                 if (write(fd, &avg_travel_time, sizeof(float)) == -1)
                 {
@@ -133,9 +135,7 @@ int main()
                 }
                 close(fd); // close pipe
             }
-            free(ride); // free memory from ride struct
         }
+        free(ride); // free memory from ride struct
     }
-        fclose(bfp);
-        fclose(source_id_table_file);
 }

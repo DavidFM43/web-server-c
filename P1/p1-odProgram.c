@@ -96,7 +96,7 @@ int main(){
                 break;
             case '4':
                 if (arrSend[0] == -2 || arrSend[1] == -2 || arrSend[2] == -2) { // incomplete data
-                    printf("Por favor ingrese todos los datos de nuevo.");
+                    printf("Por favor ingrese todos los datos de nuevo.\n");
                     continue;
                 }
 				fd = open("myfifo", O_WRONLY); // open pipe for writing
@@ -118,9 +118,9 @@ int main(){
 					return 2; // can't read from pipe
 				} else {
 					if(avg_travel_time == -1.00){
-						printf(" NA ");
+						printf("NA.\n");
 					} else {
-						printf("El tiempo medio de viaje es: %0.2f\n", avg_travel_time);
+						printf("El tiempo medio de viaje es: %0.2f.\n", avg_travel_time);
 					}
 				}
 				close(fd);

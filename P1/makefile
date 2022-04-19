@@ -3,8 +3,8 @@ CFLAGS=-g -Wall
 
 all: menu search
 
-menu: menu.c
-	$(CC) $(CFLAGS) -o menu menu.c
+menu: p1-odProgram.c
+	$(CC) $(CFLAGS) -o menu p1-odProgram.c
 
 search: search.c
 	$(CC) $(CFLAGS) -o search search.c
