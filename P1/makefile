@@ -8,3 +8,6 @@ menu: p1-odProgram.c
 
 search: search.c
 	$(CC) $(CFLAGS) -o search search.c
+
+clean: 
+	rm menu myfifo search
