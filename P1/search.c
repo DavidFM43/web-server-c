@@ -97,7 +97,6 @@ int main()
                 return 2;
             }
             close(fd); // close pipe
-            break;
         }
         else
         {
