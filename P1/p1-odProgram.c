@@ -9,6 +9,8 @@
 #include <fcntl.h>
 #include <time.h>
 void Menu();
+void Openwriting();
+void Openreading(int, float, int);
 
 int main(){
 	bool flag = true;
@@ -99,31 +101,11 @@ int main(){
                     printf("Por favor ingrese todos los datos de nuevo.\n");
                     continue;
                 }
-				fd = open("myfifo", O_WRONLY); // open pipe for writing
-				if (fd == -1){
-					return 1; // can't open pipe
-				}
 
-				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ 
-					return 2; // can't write from pipe
-				}
+                Openwriting(fd, arrSend, sizeof(arrSend)); //Writing and sending 
+                Openreading(fd, avg_travel_time, sizeof(float)); //Receive and reading
 
-				close(fd);
-
-				fd = open("myfifo", O_RDONLY); // open pipe for reading
-				if (fd == -1){
-					return 1; // can't open pipe
-				}
-				if (read(fd, &avg_travel_time, sizeof(float)) == -1){ 
-					return 2; // can't read from pipe
-				} else {
-					if(avg_travel_time == -1.00){
-						printf("NA.\n");
-					} else {
-						printf("El tiempo medio de viaje es: %0.2f.\n", avg_travel_time);
-					}
-				}
-				close(fd);
+                //deleting saved values
                 arrSend[0]=-2;
                 arrSend[1]=-2;
                 arrSend[2]=-2;
@@ -156,4 +138,32 @@ void Menu(){
 	printf("%s", "1. Ingresar origen\n2. Ingresar destino\n");
 	printf("%s", "3. Ingresar hora\n4. Buscar tiempo de viaje medio\n");
 	printf("%s", "5. Salir\n\n");
+}
+
+void Openwriting(int fd, int arrSend, int size ){
+    fd = open("myfifo", O_WRONLY); // open pipe for writing
+    if (fd == -1){
+        printf("Error al abrir la tuberia");// can't open pipe
+    }
+    if (write(fd, &arrSend, size) == -1){ // writing datas of send
+        printf("Error al escribir"); // can't write from pipe
+    }
+    close(fd);
+}
+
+void Openreading(int fd, float avg_travel_time, int size ){
+    fd = open("myfifo", O_RDONLY); // open pipe for reading
+    if (fd == -1){
+        printf("Error al abrir la tuberia"); // can't open pipe
+    }
+    if (read(fd, &avg_travel_time, size) == -1){ 
+        printf("Error al leer"); // can't read from pipe
+    } else {
+        if(avg_travel_time == -1.00){
+            printf("NA.\n");
+        } else {
+            printf("El tiempo medio de viaje es: %0.2f.\n", avg_travel_time);
+        }
+    }
+    close(fd);
 }
