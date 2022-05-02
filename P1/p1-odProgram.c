@@ -115,17 +115,8 @@ int main(){
                 arrSend[0] = -1;
                 arrSend[1] = -1;
                 arrSend[2] = -1; 
-				fd = open("myfifo", O_WRONLY); // open pipe for writing
-				if (fd == -1){
-					return 1; // can't open pipe
-				}
 
-				if (write(fd, &arrSend, sizeof(arrSend)) == -1){ 
-					return 2; // can't write from pipe
-				}
-
-				close(fd);
-
+                Openwriting(fd, arrSend, sizeof(arrSend)); //Writing for exit
                 flag = false;
                 break;
         }
@@ -148,7 +139,7 @@ void Openwriting(int fd, int arrSend, int size ){
     if (write(fd, &arrSend, size) == -1){ // writing datas of send
         printf("Error al escribir"); // can't write from pipe
     }
-    close(fd);
+    close(fd); //close pipe
 }
 
 void Openreading(int fd, float avg_travel_time, int size ){
@@ -165,5 +156,5 @@ void Openreading(int fd, float avg_travel_time, int size ){
             printf("El tiempo medio de viaje es: %0.2f.\n", avg_travel_time);
         }
     }
-    close(fd);
+    close(fd); //close pipe
 }
