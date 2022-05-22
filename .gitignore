@@ -20,3 +20,13 @@ source_id_heads.bin
 
 # dotfiles
 .vscode/
+
+# IPC
+
+
+IPC/Test files/
+IPC/consumer
+IPC/makefile
+IPC/producer
+IPC/test_open
+IPC/test_open.c
