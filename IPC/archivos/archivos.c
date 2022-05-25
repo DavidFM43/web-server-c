@@ -49,12 +49,21 @@ int main()
             {
                 ap[i] = c;
             }
-            start = clock();                 // Tiempo inicial
-            fwrite(ap, sizeof(char), l, fl); // Escritura en binario
-            end = clock();                   // Tiempo Final
-            fclose(fl);                      // Cerrar binairo
+            double times[10];
+            for (int i = 0; i < 10; i++)
+            {
+                start = clock();                                      // Tiempo inicial
+                fwrite(ap, sizeof(char), l, fl);                      // Escritura en binario
+                end = clock();                                        // Tiempo Final
+                time_used = ((double)(end - start)) / CLOCKS_PER_SEC; // Tiempo total
+                times[i] = time_used;
+            }
+            fclose(fl); // Cerrar binairo
             free(ap);
-            time_used = ((double)(end - start)) / CLOCKS_PER_SEC; // Tiempo total
+            time_used = 0;
+            for (int i = 0; i < 10; i++)
+                time_used += times[i];
+            time_used /= 10;
             son[j - 3] = time_used;
             printf("%s\n", "Se escribio en el archivo binario.");
         }
@@ -70,11 +79,20 @@ int main()
             int l = pow(10, j);
             char *ap = malloc(sizeof(char) * l);
             wait(NULL);
-            start = clock();                                      // Tiempo Inicial
-            fread(ap, sizeof(char), l, fl);                       // Lectura del binario
-            end = clock();                                        // Tiempo Final
-            fclose(fl);                                           // Cerrar el binario
-            time_used = ((double)(end - start)) / CLOCKS_PER_SEC; // Tiempo total
+            double times[10];
+            for (int i = 0; i < 10; i++)
+            {
+                start = clock();                                      // Tiempo Inicial
+                fread(ap, sizeof(char), l, fl);                       // Lectura del binario
+                end = clock();                                        // Tiempo Final
+                time_used = ((double)(end - start)) / CLOCKS_PER_SEC; // Tiempo total
+                times[i] = time_used;
+            }
+            fclose(fl); // Cerrar el binario
+            time_used = 0;
+            for (int i = 0; i < 10; i++)
+                time_used += times[i];
+            time_used /= 10;
             father[j - 3] = time_used;
             printf("%s\n", "Se leyo del archivo binario.");
         }
