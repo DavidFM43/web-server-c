@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
 
-    printf("write time: %f.\n", time_spent);
+    printf("write time: %f segs.\n", time_spent);
 
     free(data); // libera la memoria de los datos
 }
