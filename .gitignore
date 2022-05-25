@@ -1,3 +1,6 @@
+#base
+.gitignore
+
 # rides csv data
 travel_data.csv
 
@@ -20,3 +23,9 @@ source_id_heads.bin
 
 # dotfiles
 .vscode/
+#Pruebas del parcial 
+CountTime
+
+#Mejoras
+Tareas
+
