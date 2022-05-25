@@ -11,7 +11,7 @@
 
 void Openwriting();
 void Openreading(int, float, int);
-char* GenerateSpaceMemory(int, int); 
+char* GenerateSpaceMemory(int); 
 
 int main()
 {
@@ -25,18 +25,27 @@ int main()
 	}
 
     char* data; //char for send
-    int kbNum = 1; //amount
-    int space = 59999;
-    data = GenerateSpaceMemory(kbNum, space); //Generate space of 10*kbNum and fill it with a's
-    Openwriting(fd, data, space*kbNum); //Writing and sending  //100kb-tope funcional
-    //999999
+    int kbNum = 100; //amount
+    data = GenerateSpaceMemory(kbNum); //Generate space of 10*kbNum and fill it with a's
+
+    clock_t begin = clock();
+
+    Openwriting(fd, data, 1024*kbNum); //Writing and sending  //100kb-tope funcional
+
+    clock_t end = clock(); // termina de contabilizar
+
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
+
+    printf("read time: %f segs.\n", time_spent);
+
+
 	return 0;
 }
 
 
-char* GenerateSpaceMemory(int kbNum, int space){
+char* GenerateSpaceMemory(int kbNum){
 
-    int bytes = space*kbNum;
+    int bytes = 1024*kbNum;
     char *data = malloc(bytes);
     //Filling with a's
     for (int i=0; i<bytes; i++){

@@ -27,28 +27,32 @@ int main(){
         }
     }
     //Space for recive 
-    int kbNum = 1;
-    int space = 59999;  
-    int bytes = kbNum*space;
+    int kbNum = 100;  
+    int bytes = kbNum*1024;
     char *data = malloc(bytes);
-  
-    Openreading(fd,data, bytes); //Reading , Llega hasta 59999
-    //for (int i=0; i<bytes; i++){
-    //    printf("Dato-> %c  \n", data[i]);
-    //}  
+    
+    clock_t begin = clock();    
+    Openreading(fd,data, bytes); //Reading 
+    clock_t end = clock(); // termina de contabilizar
+
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
+
+    printf("read time: %f segs.\n", time_spent);   
+
+    //here, measuere time
 
     if (data == NULL){
-        printf("No esta pasand nada");
+        printf("File Null");
     }
     else{
         //filling verification
         for (int i=0; i<bytes; i++){
             if(data[i] != 'a'){
-                printf("It is not complete");
-            }
+                printf("Number end: %d \n", i ); //limit to 65536 in data[i]
+                break;
+            }    
         }
-        //That's correct
-        printf("Datos enviados:  \n" );
+        printf("check \n");
     }
 }
 

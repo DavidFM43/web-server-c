@@ -15,5 +15,7 @@ Pipes_fork.o: name_pipe.c
 Archivos.o: Vel_archivos.c
 	$(CC) $(CFLAGS) -c Vel_archivos.c
 
+
+
 clean:
 	rm *.o Archivos Pipes_fork
