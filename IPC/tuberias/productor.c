@@ -36,7 +36,7 @@ int main()
 
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
 
-    printf("read time: %f segs.\n", time_spent);
+    printf("write time: %f segs.\n", time_spent);
 
 
 	return 0;
