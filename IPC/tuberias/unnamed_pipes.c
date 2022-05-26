@@ -4,7 +4,12 @@
  * @date 2022-05-24
  *
  *
- * @see Include math librarie in the compiler
+ * @see Incluir libreria math en el compilador
+ * 
+ * @warning Para este programa solo se tiene en cuenta hasta 10^5kb dado que las tuberias tienen
+ * un size predeterminado el cual al superarse hace que la funcion write se vuelva bloqueante
+ * y no permita llevar a cabo el ejercicio de forma correcta. Incluso el programa a veces
+ * tiene problemas en 10^4kb.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,9 +23,16 @@ int main()
 {
     clock_t start, end; // Variables tiempo
     double time_used;   // Tiempo final
-    double father[6];
-    double son[6];
-    int fd[2];
+    double father[3];
+    double son[3];
+    int fd[3][2];
+    for(int j = 0; j < 2; j++){
+        if(pipe(fd[j]) == -1)
+        {
+            printf("Error en crear %d tuberia.\n", j);
+            exit(-1);
+        }
+    }
     pid_t pid;
     pid = fork();
     if (pid == -1)
@@ -28,15 +40,11 @@ int main()
         perror("Error en fork.\n");
         exit(-1);
     }
-    if(pipe(fd) == -1){
-        perror("Error en crear la pipe.\n");
-        exit(-1);
-    }
-    for (int j = 3; j < 9; j++)
+    for (int j = 3; j < 6; j++)
     {
         if (pid == 0)
         {                                          // Proceso Hijo
-            close(fd[0]);
+            close(fd[j-3][0]);
             char c = 'a';
             int l = pow(10,j);
             char *ap = malloc(sizeof(char)*l);
@@ -47,16 +55,18 @@ int main()
             for(int i = 0; i < l; i++)
                 *(ap+i) = c;
             start = clock();
-            write(fd[1], ap, l);
+            write(fd[j-3][1], ap, l);
             end = clock();
+            close(fd[j-3][1]);
             time_used = ((double)end-start)/CLOCKS_PER_SEC;
             son[j-3] = time_used;
+            free(ap);
             printf("%s\n", "Se escribio en el archivo binario.");
         }
         else
         { // Proceso Padre
 
-            close(fd[1]);
+            close(fd[j-3][1]);
             int l = pow(10,j);
             char *ap = malloc(sizeof(char)*l);
             if(ap == NULL){
@@ -65,23 +75,25 @@ int main()
             }
             wait(NULL);
             start = clock();
-            read(fd[0], ap, l);
+            read(fd[j-3][0], ap, l);
             end = clock();
+            close(fd[j-3][0]);
             time_used = ((double)end-start)/CLOCKS_PER_SEC;
             father[j-3] = time_used;
+            free(ap);
             printf("%s\n", "Se leyo del archivo binario.");
         }
     }
     if (pid == 0)
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 3; i++)
         {
             printf("Tiempo del hijo en 10^%dkb: %fs \n", i + 3, son[i]);
         }
     }
     else
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 3; i++)
         {
             printf("Tiempo del padre en 10^%dkb: %fs \n", i + 3, father[i]);
         }
