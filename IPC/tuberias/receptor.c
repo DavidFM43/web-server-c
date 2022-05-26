@@ -48,11 +48,11 @@ int main(){
         //filling verification
         for (int i=0; i<bytes; i++){
             if(data[i] != 'a'){
-                printf("Number end: %d \n", i ); //limit to 65536 in data[i]
+                //printf("Number end: %d \n", i ); //limit to 65536 in data[i]
                 break;
             }    
         }
-        printf("check \n");
+        //printf("check \n");
     }
 }
 
