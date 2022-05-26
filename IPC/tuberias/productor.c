@@ -13,8 +13,15 @@ void Openwriting();
 void Openreading(int, float, int);
 char* GenerateSpaceMemory(int); 
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc > 2 || argc == 1)
+    {
+        printf("Incorrect number of arguments supplied.\n");
+        exit(-1);
+    }
+    int kbNum = atoi(argv[1]);
+
     // FIFO
 	int fd;
 	if (mkfifo("myfifo", 0777) == -1){  // creating fifo file 
@@ -25,7 +32,7 @@ int main()
 	}
 
     char* data; //char for send
-    int kbNum = 100; //amount
+    //int kbNum = 100; //amount
     data = GenerateSpaceMemory(kbNum); //Generate space of 10*kbNum and fill it with a's
 
     clock_t begin = clock();

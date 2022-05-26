@@ -11,7 +11,8 @@
 #define MEM_SIZE 1024 * 1240000
 
 char *create_data(int);
-
+//numero de argumentos, lista de los argumentos
+//nombre del archivo, 1
 int main(int argc, char *argv[])
 {
     if (argc > 2 || argc == 1)

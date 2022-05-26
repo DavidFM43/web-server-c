@@ -35,7 +35,7 @@ int main(){
 
     int clientfd, opt = 1;
     struct sockaddr_in server, client;
-    socklen_t tamano;
+    socklen_t tamaño;
 
 
     serverfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,7 +63,7 @@ int main(){
         exit(-1);
     }
 
-    clientfd = accept(serverfd, (struct sockaddr *)&client, &tamano);
+    clientfd = accept(serverfd, (struct sockaddr *)&client, &tamaño);
 	gettimeofday(&start, NULL); 
     if(clientfd < 0)
     {
