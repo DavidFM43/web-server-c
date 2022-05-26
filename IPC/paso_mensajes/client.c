@@ -13,12 +13,20 @@
 
 int main(int argc, char *argv[])
 {
+    if (argc > 2 || argc == 1)
+    {
+        printf("Incorrect number of arguments supplied.\n");
+        exit(-1);
+    }
+
     int clientfd, r;
     struct sockaddr_in client;
-    struct hostent *he;
-    int sizes[] = {1024,10240,102400,1048576,10485760,104857600};
-    int l = 0;
-    int* data = malloc(sizes[l]);
+    // int sizes[] = {1024,10240,102400,1048576,10485760,104857600};
+    // int l = 0;
+
+    int kbs = atoi(argv[1]);
+    int size = 1024*kbs;
+    int* data = malloc(size);
 
 	//struct timeval start, end;
     clock_t begin = clock();  
@@ -38,7 +46,7 @@ int main(int argc, char *argv[])
         perror("\n error en connect(): ");
         exit(-1);
     }
-    r = recv(clientfd, data, sizes[l], 0);
+    r = recv(clientfd, data, size, 0);
 	if(r < 0){
         perror("\n error en connect(): ");
         exit(-1);

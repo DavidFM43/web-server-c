@@ -10,10 +10,17 @@ sockets_dir = ./paso_mensajes/
 builds_dir = ./builds/
 
 # all: files shm named_pipes sockets unnamed_pipes
-all: shm pipes files 
+all: shm pipes files sockets 
 
+sockets: client server
 shm: shm_producer shm_consumer
 pipes: npipes_consumer npipes_producer unnamed_pipes
+
+client: $(sockets_dir)client.c
+	$(CC) $(CFLAGS) -o $(builds_dir)client $(sockets_dir)client.c
+
+server: $(sockets_dir)server.c
+	$(CC) $(CFLAGS) -o $(builds_dir)server $(sockets_dir)server.c 
 
 files: $(files_dir)archivos.c
 	$(CC) $(CFLAGS) -o $(builds_dir)files $(files_dir)archivos.c -lm
@@ -32,4 +39,4 @@ shm_consumer: $(shm_dir)shm_cons.c
 	$(CC) $(CFLAGS) -o $(builds_dir)shm_consumer $(shm_dir)shm_cons.c
 
 clean: 
-	rm builds/*
+	rm builds/* myfifo

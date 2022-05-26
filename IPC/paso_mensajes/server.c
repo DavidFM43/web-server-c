@@ -26,12 +26,20 @@ struct sockaddr_in {
 
 int serverfd;
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
+    if (argc > 2 || argc == 1)
+    {
+        printf("Incorrect number of arguments supplied.\n");
+        exit(-1);
+    }
 
-    int sizes[] = {1024,10240,102400,1048576,10485760,104857600};//Aqui tambien 
+    // int sizes[] = {1024,10240,102400,1048576,10485760,104857600};//Aqui tambien 
     int r = 0; //Para que se usa el r
-    int l = 5; 
-    int* data = malloc(sizes[l]);
+    // int l = 5; 
+    int kbs = atoi(argv[1]);
+    int size = 1024*kbs;
+    int* data = malloc(size);
 
 	//struct timeval start, end;//Aqui usa una estructura para los tiempos 
 
@@ -72,12 +80,12 @@ int main(int argc, char *argv[]){
         perror("\n error server accept(): ");
         exit(-1);
     }
-	for( int i=0; i<sizes[l]/4; i++ ){ //Vamos a cambiar esto 
+	for( int i=0; i<size/4; i++ ){ //Vamos a cambiar esto 
         *(data+i) = 420;
     }
 
     
-    r = send(clientfd, data, sizes[l], 0);
+    r = send(clientfd, data, size, 0);
     clock_t end = clock();
 
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura

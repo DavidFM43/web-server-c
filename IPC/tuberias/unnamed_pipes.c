@@ -91,14 +91,14 @@ int main()
     {
         for (int i = 0; i < 3; i++)
         {
-            printf("Tiempo del hijo en 10^%dkb: %fs \n", i + 3, son[i]);
+            printf("Tiempo del hijo en 10^ %d kb: %f  \n", i + 3, son[i]);
         }
     }
     else
     {
         for (int i = 0; i < 3; i++)
         {
-            printf("Tiempo del padre en 10^%dkb: %fs \n", i + 3, father[i]);
+            printf("Tiempo del padre en 10^ %d kb: %f \n", i + 3, father[i]);
         }
     }
     return 0;
