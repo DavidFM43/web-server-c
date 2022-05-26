@@ -31,7 +31,7 @@ int main()
     {
         if (pid == 0)
         {                                          // Proceso Hijo
-            FILE *fl = fopen("../archivos/Archivo.bin", "wb"); // Crear-Abrir binario para escritura
+            FILE *fl = fopen("archivos/Archivo.bin", "wb"); // Crear-Abrir binario para escritura
             if (fl == NULL)
             {
                 perror("Error en escritura de archivo.\n");
@@ -70,7 +70,7 @@ int main()
         else
         { // Proceso Padre
 
-            FILE *fl = fopen("../archivos/Archivo.bin", "rb"); // Abrir binario para lectura
+            FILE *fl = fopen("archivos/Archivo.bin", "rb"); // Abrir binario para lectura
             if (fl == NULL)
             {
                 perror("Error en lectura de archivo.\n");
