@@ -5,7 +5,7 @@ CFLAGS=-g -Wall
 files_dir = ./archivos/
 shm_dir = ./shm/
 pipes_dir = ./tuberias/
-sockets_dir = ./pm/
+sockets_dir = ./paso_mensajes/
 
 builds_dir = ./builds/
 
