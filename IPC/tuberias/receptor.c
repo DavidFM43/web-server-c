@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -32,60 +31,66 @@ int main(int argc, char *argv[])
             return 1;
         }
     }
-    
+
     int bytes = kbNum * 1024;
     char *data = malloc(bytes);
-    
-    clock_t begin = clock();    
-    Openreading(data, bytes); //Reading 
-    clock_t end = clock(); // termina de contabilizar
+
+    clock_t begin = clock();
+    Openreading(data, bytes); // Reading
+    clock_t end = clock();    // termina de contabilizar
 
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
 
-    printf("read time: %f segs.\n", time_spent);   
+    printf("read time: %f segs.\n", time_spent);
 
-    //here, measuere time
+    // here, measuere time
 
-    if (data == NULL){
+    if (data == NULL)
+    {
         printf("File Null");
     }
-    else{
-        //filling verification
-        for (int i=0; i<bytes; i++){
-            if(data[i] != 'a'){
-                //printf("Number end: %d \n", i ); //limit to 65536 in data[i]
+    else
+    {
+        // filling verification
+        for (int i = 0; i < bytes; i++)
+        {
+            if (data[i] != 'a')
+            {
+                // printf("Number end: %d \n", i ); //limit to 65536 in data[i]
                 break;
-            }    
+            }
         }
-        //printf("check \n");
+        // printf("check \n");
     }
 }
 
-
-
-
-
-void Openwriting(float avg_travel_time, int size ){
+void Openwriting(float avg_travel_time, int size)
+{
     int fd;
     fd = open("myfifo", O_WRONLY); // open pipe for writing
-    if (fd == -1){
-        printf("Error al abrir la tuberia");// can't open pipe
+    if (fd == -1)
+    {
+        printf("Error al abrir la tuberia"); // can't open pipe
     }
-    if (write(fd, &avg_travel_time, size) == -1){ // writing datas of send
+    if (write(fd, &avg_travel_time, size) == -1)
+    {                                // writing datas of send
         printf("Error al escribir"); // can't write from pipe
     }
     close(fd);
 }
- 
-void Openreading(char *arrArrival, int size ){
+
+void Openreading(char *arrArrival, int size)
+{
     int fd;
     fd = open("myfifo", O_RDONLY); // open pipe for reading
-    if (fd == -1){
+    if (fd == -1)
+    {
         printf("Error al abrir la tuberia"); // can't open pipe
     }
-    if (read(fd, arrArrival, size) == -1){ 
+    if (read(fd, arrArrival, size) == -1)
+    {
         printf("Error al leer"); // can't read from pipe
-    } 
+    }
 
-    close(fd); //close pipe
+    close(fd); // close pipe
 }

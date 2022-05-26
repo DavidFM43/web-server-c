@@ -4,7 +4,7 @@
  * @date 2022-05-18
  *
  *
- * @see Include math librarie in the compiler
+ * @see Include math library in the compiler
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +30,7 @@ int main()
     for (int j = 3; j < 9; j++)
     {
         if (pid == 0)
-        {                                          // Proceso Hijo
+        {                                                   // Proceso Hijo
             FILE *fl = fopen("archivos/Archivo.bin", "wb"); // Crear-Abrir binario para escritura
             if (fl == NULL)
             {
@@ -58,7 +58,7 @@ int main()
                 time_used = ((double)(end - start)) / CLOCKS_PER_SEC; // Tiempo total
                 times[i] = time_used;
             }
-            fclose(fl); // Cerrar binairo
+            fclose(fl); // Cerrar binario
             free(ap);
             time_used = 0;
             for (int i = 0; i < 10; i++)

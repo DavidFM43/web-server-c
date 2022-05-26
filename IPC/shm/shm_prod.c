@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     int kbs = atoi(argv[1]);
 
-    char *data = create_data(kbs); // Genera los datos a enviar
+    char *data = create_data(kbs); // genera los datos a enviar
 
     clock_t begin = clock(); // empieza a contabilizar
 
