@@ -14,8 +14,15 @@
 void Openwriting(float, int);
 void Openreading(char *p, int);
 
-int main(){
-    //FIFO
+int main(int argc, char *argv[])
+{
+    if (argc > 2 || argc == 1)
+    {
+        printf("Incorrect number of arguments supplied.\n");
+        exit(-1);
+    }
+    int kbNum = atoi(argv[1]);
+
     // create pipe
     if (mkfifo("myfifo", 0777) == -1)
     {
@@ -25,9 +32,8 @@ int main(){
             return 1;
         }
     }
-    //Space for recive 
-    int kbNum = 100;  
-    int bytes = kbNum*1024;
+    
+    int bytes = kbNum * 1024;
     char *data = malloc(bytes);
     
     clock_t begin = clock();    
