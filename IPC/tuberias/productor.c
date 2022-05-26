@@ -10,7 +10,7 @@
 #include <time.h>
 
 void Openwriting();
-void Openreading(int, float, int);
+void Openreading(float, int);
 char* GenerateSpaceMemory(int); 
 
 int main(int argc, char *argv[])
@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
     int kbNum = atoi(argv[1]);
 
     // FIFO
-	int fd;
 	if (mkfifo("myfifo", 0777) == -1){  // creating fifo file 
 		if (errno != EEXIST){
 			printf("Could not create fifo file\n");
@@ -37,7 +36,7 @@ int main(int argc, char *argv[])
 
     clock_t begin = clock();
 
-    Openwriting(fd, data, 1024*kbNum); //Writing and sending  //100kb-tope funcional
+    Openwriting(data, 1024*kbNum); //Writing and sending  //100kb-tope funcional
 
     clock_t end = clock(); // termina de contabilizar
 
@@ -68,7 +67,8 @@ char* GenerateSpaceMemory(int kbNum){
 }
 
 
-void Openwriting(int fd, char* arrSend, int size ){
+void Openwriting(char* arrSend, int size ){
+    int fd;
     fd = open("myfifo", O_WRONLY); // open pipe for writing
     if (fd == -1){
         printf("Error al abrir la tuberia");// can't open pipe
@@ -79,7 +79,8 @@ void Openwriting(int fd, char* arrSend, int size ){
     close(fd); //close pipe
 }
 
-void Openreading(int fd, float avg_travel_time, int size ){
+void Openreading(float avg_travel_time, int size ){
+    int fd;
     fd = open("myfifo", O_RDONLY); // open pipe for reading
     if (fd == -1){
         printf("Error al abrir la tuberia"); // can't open pipe

@@ -11,12 +11,11 @@
 #include <fcntl.h>
 #include <time.h>
 
-void Openwriting(int, float, int);
-void Openreading(int, char *p, int);
+void Openwriting(float, int);
+void Openreading(char *p, int);
 
 int main(){
     //FIFO
-    int fd;
     // create pipe
     if (mkfifo("myfifo", 0777) == -1)
     {
@@ -32,7 +31,7 @@ int main(){
     char *data = malloc(bytes);
     
     clock_t begin = clock();    
-    Openreading(fd,data, bytes); //Reading 
+    Openreading(data, bytes); //Reading 
     clock_t end = clock(); // termina de contabilizar
 
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
@@ -60,7 +59,8 @@ int main(){
 
 
 
-void Openwriting(int fd, float avg_travel_time, int size ){
+void Openwriting(float avg_travel_time, int size ){
+    int fd;
     fd = open("myfifo", O_WRONLY); // open pipe for writing
     if (fd == -1){
         printf("Error al abrir la tuberia");// can't open pipe
@@ -71,7 +71,8 @@ void Openwriting(int fd, float avg_travel_time, int size ){
     close(fd);
 }
  
-void Openreading(int fd, char *arrArrival, int size ){
+void Openreading(char *arrArrival, int size ){
+    int fd;
     fd = open("myfifo", O_RDONLY); // open pipe for reading
     if (fd == -1){
         printf("Error al abrir la tuberia"); // can't open pipe

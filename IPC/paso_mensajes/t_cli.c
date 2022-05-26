@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/time.h>
-
+#include <time.h>
 #define PORT 3535
 
 
@@ -20,8 +20,8 @@ int main(int argc, char *argv[])
     int l = 0;
     int* data = malloc(sizes[l]);
 
-	struct timeval start, end;
-    
+	//struct timeval start, end;
+    clock_t begin = clock();  
     clientfd = socket(AF_INET, SOCK_STREAM, 0);
     if(clientfd < 0){
         perror("\n error en socket(): ");
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     inet_aton("127.0.0.1", &client.sin_addr);
     
     r = connect(clientfd, (struct sockaddr *)&client, (socklen_t)sizeof(struct sockaddr));
-	gettimeofday(&start, NULL); 
+	//gettimeofday(&start, NULL); 
     if(r < 0){
         perror("\n error en connect(): ");
         exit(-1);
@@ -43,10 +43,16 @@ int main(int argc, char *argv[])
         perror("\n error en connect(): ");
         exit(-1);
     }
-	gettimeofday(&end, NULL);
+	//gettimeofday(&end, NULL);
 
-	printf("time cliente: %f\n", (double) ((end.tv_sec - start.tv_sec)*1000000L	+ end.tv_usec - start.tv_usec));
+	//printf("time cliente: %f\n", (double) ((end.tv_sec - start.tv_sec)*1000000L	+ end.tv_usec - start.tv_usec));
 
     close(clientfd);
+
+    clock_t end = clock();
+
+    double time_spent = (double)(end - begin) / CLOCKS_PER_SEC; // tiempo de escritura
+    printf("client time: %f segs.\n", time_spent);
+
 
 }
