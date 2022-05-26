@@ -6,19 +6,20 @@ files_dir = ./archivos/
 shm_dir = ./shm/
 pipes_dir = ./tuberias/
 sockets_dir = ./pm/
+
 builds_dir = ./builds/
 
 # all: files shm named_pipes sockets unnamed_pipes
-all: shm named_pipes files
+all: shm pipes files 
 
 shm: shm_producer shm_consumer
-named_pipes: npipes_consumer npipes_producer unnamed_pipes
+pipes: npipes_consumer npipes_producer unnamed_pipes
 
 files: $(files_dir)archivos.c
 	$(CC) $(CFLAGS) -o $(builds_dir)files $(files_dir)archivos.c -lm
 
 unnamed_pipes: $(pipes_dir)unnamed_pipes.c
-	$(CC) $(CFLAGS) -o $(builds_dir)unnamed_pipes_producer $(pipes_dir)unnamed_pipes.c -lm
+	$(CC) $(CFLAGS) -o $(builds_dir)unnamed_pipes $(pipes_dir)unnamed_pipes.c -lm
 
 npipes_producer: $(pipes_dir)productor.c
 	$(CC) $(CFLAGS) -o $(builds_dir)named_pipes_producer $(pipes_dir)productor.c
