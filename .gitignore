@@ -23,9 +23,21 @@ source_id_heads.bin
 
 # dotfiles
 .vscode/
-#Pruebas del parcial 
+
+# Pruebas del parcial 
 CountTime
 
 #Mejoras
 Tareas
+
+# IPC
+
+IPC/Shm/consumer
+IPC/Shm/makefile
+IPC/Shm/producer
+IPC/Shm/shm.sh
+IPC/test_open
+IPC/test_open.c
+
+IPC/archivos/Archivo.bin
 

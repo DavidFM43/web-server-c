@@ -82,7 +82,9 @@ int main()
         if (source_id_table[source_id] == -1) // no rides with that source id
         {
             avg_travel_time = -1.0;        // NA flag
+
             Openwriting(fd, avg_travel_time, sizeof(float)); //writting -1.0 for NA flag
+
         }
         else
         {
