@@ -1,3 +1,6 @@
+#base
+.gitignore
+
 # rides csv data
 travel_data.csv
 
@@ -21,6 +24,12 @@ source_id_heads.bin
 # dotfiles
 .vscode/
 
+# Pruebas del parcial 
+CountTime
+
+#Mejoras
+Tareas
+
 # IPC
 
 IPC/Shm/consumer
@@ -30,10 +39,5 @@ IPC/Shm/shm.sh
 IPC/test_open
 IPC/test_open.c
 
-<<<<<<< HEAD
-#test
-
-CountTime   
-=======
 IPC/archivos/Archivo.bin
->>>>>>> c94298d8cdfcff2e2aa1885f147f50ae77ad382f
+

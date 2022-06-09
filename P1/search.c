@@ -12,6 +12,9 @@
 #include <fcntl.h>
 #include <time.h>
 
+void Openwriting(int, float, int);
+void Openreading(int, int *p, int);
+
 int main()
 {
     // open files
@@ -58,19 +61,8 @@ int main()
     while (true)
     {
         // receives data from user interface process
+        Openreading(fd, arrArrival, sizeof(arrArrival));
 
-        fd = open("myfifo", O_RDONLY); // open pipe for reading
-        if (fd == -1)
-        {
-            printf("Can't open pipe from reading.\n");
-            return 1;
-        }
-        if (read(fd, &arrArrival, sizeof(arrArrival)) == -1) // read attributes to arrArrival array
-        {
-            printf("Can't read from pipe.\n");
-            return 2;
-        }
-        close(fd); // close pipe
 
         if (arrArrival[0] == -1) // program termination flag
         {
@@ -90,13 +82,9 @@ int main()
         if (source_id_table[source_id] == -1) // no rides with that source id
         {
             avg_travel_time = -1.0;        // NA flag
-            fd = open("myfifo", O_WRONLY); // open pipe
-            if (write(fd, &avg_travel_time, sizeof(float)) == -1)
-            {
-                printf("Can't write in pipe.");
-                return 2;
-            }
-            close(fd); // close pipe
+
+            Openwriting(fd, avg_travel_time, sizeof(float)); //writting -1.0 for NA flag
+
         }
         else
         {
@@ -109,13 +97,7 @@ int main()
                 if (ride->hour == hour && ride->dest_id == dest_id) // checks criteria
                 {
                     avg_travel_time = ride->avg_time; // save average travel time
-                    fd = open("myfifo", O_WRONLY);    // open pipe
-                    if (write(fd, &avg_travel_time, sizeof(float)) == -1)
-                    {
-                        printf("Can't write in pipe.\n");
-                        return 2;
-                    }
-                    close(fd); // close pipe
+                    Openwriting(fd, avg_travel_time, sizeof(float)); //writing average travel time
                     found = true;
                     break;
                 }
@@ -126,15 +108,32 @@ int main()
             if (!found)
             {
                 avg_travel_time = -1.0;        // NA flag
-                fd = open("myfifo", O_WRONLY); // open pipe
-                if (write(fd, &avg_travel_time, sizeof(float)) == -1)
-                {
-                    printf("Can't write in pipe.\n");
-                    return 2;
-                }
-                close(fd); // close pipe
+                Openwriting(fd, avg_travel_time, sizeof(float)); //writting -1.0 for NA flag
             }
         }
         free(ride); // free memory from ride struct
     }
+}
+
+void Openwriting(int fd, float avg_travel_time, int size ){
+    fd = open("myfifo", O_WRONLY); // open pipe for writing
+    if (fd == -1){
+        printf("Error al abrir la tuberia");// can't open pipe
+    }
+    if (write(fd, &avg_travel_time, size) == -1){ // writing datas of send
+        printf("Error al escribir"); // can't write from pipe
+    }
+    close(fd);
+}
+ 
+void Openreading(int fd, int *arrArrival, int size ){
+    fd = open("myfifo", O_RDONLY); // open pipe for reading
+    if (fd == -1){
+        printf("Error al abrir la tuberia"); // can't open pipe
+    }
+    if (read(fd, arrArrival, size) == -1){ 
+        printf("Error al leer"); // can't read from pipe
+    } 
+
+    close(fd); //close pipe
 }
