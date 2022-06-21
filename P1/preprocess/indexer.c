@@ -4,13 +4,14 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "ride.h"
 #define TABLE_SIZE 1200
 
 void index_file()
 {
     FILE *bfp = fopen("../data/rides.bin", "rb+");
+    if(bfp == NULL) exit(-1);
+    
     Ride ride;
 
     int heads_id_source[TABLE_SIZE]; // heads of the linked lists
@@ -18,7 +19,7 @@ void index_file()
     int current_pos = 0;             // current file position
 
     // initalizes the heads and tails tables with -1
-    for (int i = 0; i < 1200; i++)
+    for (int i = 0; i < TABLE_SIZE; i++)
     {
         tails_id_source[i] = -1;
         heads_id_source[i] = -1;
@@ -39,7 +40,7 @@ void index_file()
             fseek(bfp, tails_id_source[current_id_source], SEEK_SET); // moves to the infile position of the old tail
             fread(&old_tail, sizeof(Ride), 1, bfp);                   // reads the structure
             old_tail.next_source_id = current_pos;                    // set next source ID
-            fseek(bfp, -sizeof(struct Ride), SEEK_CUR);               // moves back to where the old tail was located
+            fseek(bfp, -sizeof(Ride), SEEK_CUR);               // moves back to where the old tail was located
             fwrite(&old_tail, sizeof(Ride), 1, bfp);                  // write old tail
             tails_id_source[current_id_source] = current_pos;         // put new tail in the tails table
             fseek(bfp, current_pos + sizeof(Ride), SEEK_SET);         // set infile position back were it was

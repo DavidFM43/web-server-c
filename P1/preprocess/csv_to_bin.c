@@ -14,12 +14,18 @@ void csv_to_bin()
 
     if (fp == NULL)
     {
-        printf("Can't open file\n");
+        printf("Can't open file.\n");
         exit(-1);
     }
     else
     {
         FILE *bfp = fopen("../data/rides.bin", "wb");
+        
+        if (bfp == NULL)
+		{
+			printf("Can't open file.\n");
+			exit(-1);
+		}
         char row[1024];
 
         fgets(row, 1024, fp); // dismiss column headers

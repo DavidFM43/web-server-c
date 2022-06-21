@@ -3,9 +3,6 @@ CFLAGS=-g -Wall
 
 all:preprocess
 
-search_test: search_testing.c
-	$(CC) $(CFLAGS) -o search_test search_testing.c
-
 indexer.o: indexer.c
 	$(CC) $(CFLAGS) -c indexer.c
 
