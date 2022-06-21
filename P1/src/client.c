@@ -145,10 +145,10 @@ int main()
             { // incomplete data
                 printf("Por favor ingrese todos los datos de nuevo.\n");
             } else {
-                send(sock, arrSend, sizeof(arrSend), 0);
-                printf("\n Se han enviado los datos (cliente). \n");
-                read(sock, &avg_travel_time, sizeof(avg_travel_time));
-                printf("\n Se ha recibido el dato (cliente). \n");
+                send(sock, arrSend, sizeof(arrSend), 0); // send data
+                printf("Se han enviado los datos (cliente). \n");
+                read(sock, &avg_travel_time, sizeof(avg_travel_time)); // recieve travel time
+                printf("Se ha recibido el dato (cliente). \n");
                 if(avg_travel_time == -1.00)
                     printf("No se han encontrado coincidencias.\n");
                 else

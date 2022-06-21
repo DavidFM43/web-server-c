@@ -53,12 +53,12 @@ int main(int argc, char const* argv[])
     int addrlen = sizeof(address);
  
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-        perror("socket failed\n");
+        perror("socket failed.\n");
         exit(EXIT_FAILURE);
     }
  
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-        perror("setsockopt failed\n");
+        perror("setsockopt failed.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -67,11 +67,11 @@ int main(int argc, char const* argv[])
     address.sin_port = htons(PORT);
  
     if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
-        perror("bind failed\n");
+        perror("bind failed.\n");
         exit(EXIT_FAILURE);
     }
 
-    if (listen(server_fd, 3) < 0) {
+    if (listen(server_fd, 32) < 0) {
         perror("listen\n");
         exit(EXIT_FAILURE);
     }
@@ -85,9 +85,7 @@ int main(int argc, char const* argv[])
         // receives data from user interface process
 
         read(new_socket, arrArrival, sizeof(arrArrival));
-        printf("\n Se leyeton los datos (servidor). \n");
-        //for(int i = 0 ; i < 3; i++)
-            //printf("Receive int = %d\n", arrArrival[i]);
+        printf("Se leyeron los datos (servidor). \n");
 
         if (arrArrival[0] == -1) // program termination flag
         {
@@ -111,7 +109,7 @@ int main(int argc, char const* argv[])
         {
             avg_travel_time = -1.00;        // NA flag
             send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0);
-            printf("\n Se ha enviado el dato (servidor). \n");
+            printf("Se ha enviado el dato (servidor). \n");
             break;
         }
         else
@@ -126,7 +124,7 @@ int main(int argc, char const* argv[])
                 {
                     avg_travel_time = ride->avg_time; // save average travel time
                     send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0);
-                    printf("\n Se ha enviado el dato (servidor). \n");
+                    printf("Se ha enviado el dato (servidor). \n");
                     found = true;
                     break;
                 }
