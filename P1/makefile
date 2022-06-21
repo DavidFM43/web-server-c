@@ -1,10 +1,25 @@
 CC=gcc
 CFLAGS=-g -Wall
 
-all: menu search
+all: server client
 
-menu: p1-odProgram.c
-	$(CC) $(CFLAGS) -o menu p1-odProgram.c
+preprocess_dir = ./preprocess/
+source_dir = ./src/
 
-search: search.c
-	$(CC) $(CFLAGS) -o server search.c
+preprocess: $(preprocess_dir)preprocess.c $(preprocess_dir)csv_to_bin.o $(preprocess_dir)indexer.o 
+	$(CC) $(CFLAGS) -o preprocess_data $(preprocess_dir)preprocess.c $(preprocess_dir)csv_to_bin.o $(preprocess_dir)indexer.o
+
+indexer.o: $(preprocess_dir)indexer.c
+	$(CC) $(CFLAGS) -c $(preprocess_dir)indexer.c
+
+csv_to_bin.o: $(preprocess_dir)csv_to_bin.c
+	$(CC) $(CFLAGS) -c $(preprocess_dir)csv_to_bin.c
+
+server: $(source_dir)server.c
+	$(CC) $(CFLAGS) -o server $(source_dir)server.c
+
+client: $(source_dir)client.c
+	$(CC) $(CFLAGS) -o client $(source_dir)client.c
+
+clean:
+	rm $(preprocess_dir)*.o server client preprocess_data 

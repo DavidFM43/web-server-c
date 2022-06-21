@@ -9,7 +9,7 @@
 
 void index_file()
 {
-    FILE *bfp = fopen("../data/rides.bin", "rb+");
+    FILE *bfp = fopen("/data/rides.bin", "rb+");
     if(bfp == NULL) exit(-1);
     
     Ride ride;
