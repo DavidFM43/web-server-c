@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <time.h>
 #define PORT 8080
 #define TABLE_SIZE 1200
 
@@ -21,7 +22,8 @@ int main(int argc, char const* argv[])
     // open files
     FILE *bfp = fopen("data/rides.bin", "rb");
     FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
-    if (bfp == NULL || source_id_table_file == NULL)
+    FILE *f = fopen("x.log", "w"); // log file
+    if (bfp == NULL || source_id_table_file == NULL || f == NULL)
     {
         printf("Can't open files");
         exit(-1);
@@ -52,13 +54,16 @@ int main(int argc, char const* argv[])
     int opt = 1;
     int addrlen = sizeof(address);
  
+    //others
+    time_t t;
+
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
-        perror("socket failed.\n");
+        perror("socket failed\n");
         exit(EXIT_FAILURE);
     }
  
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
-        perror("setsockopt failed.\n");
+        perror("setsockopt failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -67,11 +72,11 @@ int main(int argc, char const* argv[])
     address.sin_port = htons(PORT);
  
     if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
-        perror("bind failed.\n");
+        perror("bind failed\n");
         exit(EXIT_FAILURE);
     }
 
-    if (listen(server_fd, 32) < 0) {
+    if (listen(server_fd, 3) < 0) {
         perror("listen\n");
         exit(EXIT_FAILURE);
     }
@@ -84,8 +89,10 @@ int main(int argc, char const* argv[])
     {
         // receives data from user interface process
 
-        read(new_socket, arrArrival, sizeof(arrArrival));
-        printf("Se leyeron los datos (servidor). \n");
+        read(new_socket, arrArrival, sizeof(arrArrival)); // receive data
+        time(&t);
+        fprintf(f, "[Fecha %s] Cliente [%s] [%d - %d]\n", ctime(&t), inet_ntoa(address.sin_addr), arrArrival[0], arrArrival[1]); // log file info
+        printf("\n Se leyeton los datos (servidor). \n");
 
         if (arrArrival[0] == -1) // program termination flag
         {
@@ -108,8 +115,8 @@ int main(int argc, char const* argv[])
         if (source_id_table[source_id] == -1) // no rides with that source id
         {
             avg_travel_time = -1.00;        // NA flag
-            send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0);
-            printf("Se ha enviado el dato (servidor). \n");
+            send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0); // send result using socket
+            printf("\n Se ha enviado el dato (servidor). \n");
             break;
         }
         else
@@ -123,8 +130,8 @@ int main(int argc, char const* argv[])
                 if (ride->hour == hour && ride->dest_id == dest_id) // checks criteria
                 {
                     avg_travel_time = ride->avg_time; // save average travel time
-                    send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0);
-                    printf("Se ha enviado el dato (servidor). \n");
+                    send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0); // send result using socket
+                    printf("\n Se ha enviado el dato (servidor). \n");
                     found = true;
                     break;
                 }
@@ -135,11 +142,12 @@ int main(int argc, char const* argv[])
             if (!found)
             {
                 avg_travel_time = -1.0;        // NA flag
-                send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0);
+                send(new_socket, &avg_travel_time, sizeof(avg_travel_time), 0); // send result using socket
                 printf("\n Se ha enviado el dato (servidor). \n");
             }
         }
         free(ride); // free memory from ride struct
-        read(new_socket, arrArrival, sizeof(arrArrival));
+        read(new_socket, arrArrival, sizeof(arrArrival)); // receive flag through the socket
     }
+    fclose(f);
 }
