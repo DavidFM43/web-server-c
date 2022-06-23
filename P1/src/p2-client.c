@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <ncurses.h>
 #define PORT 8080
 
 void Menu();
@@ -145,10 +146,10 @@ int main()
             { // incomplete data
                 printf("Por favor ingrese todos los datos de nuevo.\n");
             } else {
-                send(sock, arrSend, sizeof(arrSend), 0); // send data
-                printf("Se han enviado los datos (cliente). \n");
-                read(sock, &avg_travel_time, sizeof(avg_travel_time)); // recieve travel time
-                printf("Se ha recibido el dato (cliente). \n");
+                send(sock, arrSend, sizeof(arrSend), 0); // Data send to the server using socket
+                printf("\n Se han enviado los datos (cliente). \n");
+                read(sock, &avg_travel_time, sizeof(avg_travel_time)); // Receive data from the server
+                printf("\n Se ha recibido el dato (cliente). \n");
                 if(avg_travel_time == -1.00)
                     printf("No se han encontrado coincidencias.\n");
                 else
@@ -156,15 +157,20 @@ int main()
                 arrSend[0] = -2;
                 arrSend[1] = -2;
                 arrSend[2] = -2;
-                send(sock, arrSend, sizeof(arrSend), 0);
+                send(sock, arrSend, sizeof(arrSend), 0); // Data send to the server using socket
             }
+            initscr(); // Init alternative screen
+            printw("\n Presione cualquier tecla para continuar. \n");
+            refresh();
+            getch(); // Press any key
+            endwin(); // End alternative screen
             break;
         case '5':
-            // sending -1 to close the program
+            // Sending -1 to close the program
             arrSend[0] = -1;
             arrSend[1] = -1;
             arrSend[2] = -1;
-            send(sock, arrSend, sizeof(arrSend), 0);
+            send(sock, arrSend, sizeof(arrSend), 0); // Send flag
             flag = false;
             close(client_fd);
             break;
