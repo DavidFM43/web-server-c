@@ -15,11 +15,11 @@ indexer.o: $(preprocess_dir)indexer.c
 csv_to_bin.o: $(preprocess_dir)csv_to_bin.c
 	$(CC) $(CFLAGS) -c $(preprocess_dir)csv_to_bin.c
 
-server: $(source_dir)server.c
-	$(CC) $(CFLAGS) -o server $(source_dir)server.c
+server: $(source_dir)p2-server.c
+	$(CC) $(CFLAGS) -o server $(source_dir)p2-server.c
 
-client: $(source_dir)client.c
-	$(CC) $(CFLAGS) -o client $(source_dir)client.c
+client: $(source_dir)p2-client.c
+	$(CC) $(CFLAGS) -o client $(source_dir)p2-client.c -lncurses
 
 clean:
 	rm $(preprocess_dir)*.o server client preprocess_data 
