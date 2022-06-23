@@ -20,10 +20,12 @@ Antes de ejecutar el programa, es necesario descargar e indexar el archivo de vi
 3. Ejecutar `preprocess_data` para generar el archivo binario de estructuras.
 4. Remover los archivos innecesarios mediante el comando `make clean`
 
+Tambien es necesario asegurarse de tener instalada la libreria ncurses. Se adjunta guia de como hacerlo en caso contrario. (https://www.cyberciti.biz/faq/linux-install-ncurses-library-headers-on-debian-ubuntu-centos-fedora/)
+
 **Ejecución del programa:**
 
 1. En la carpeta P1, compilar los archivos del programa ejecutando el comando `make`.
-2. Lanzas el proceso `menu` en una terminal y el proceso `search` en otra terminal.
+2. Lanzas el proceso `menu` en una terminal y el proceso `server` en otra terminal.
 
 
 ## **Inter Process Communication**
