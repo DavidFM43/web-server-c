@@ -46,19 +46,14 @@ También es necesario asegurarse de tener instalada la librería ncurses. Se adj
         - Cerrar el socket una vez se cierre el socket del cliente.
 
 - `p2-client.c`
-    - Se declaran las variables de envio y se declaran las variables que usamos en el socket.
-    - Elegimos la dirección IP 127.0.0.1.
-    - Creamos el cliente. 
-    - Se entra a un while y utilizamos una flag = True, para generar un bucle para repetir la salida del menú.
-    - Aquí se tiene un swift para cada caso; en particular en el caso 4 se envían los datos por el socket.
-    - Si queremos salir tenemos el caso 5, que sirve para cerrar el socket.
-## Diagrama de funciones
+    - `int main()`
+        - Se declaran las variables de envió y se declaran las variables que usamos en el socket.
+        - Elegimos la dirección IP 127.0.0.1.
+        - Creamos el cliente. 
+        - Se entra a un while y utilizamos una flag = True, para generar un bucle para repetir la salida del menú.
+        - Aquí se tiene un swift para cada caso; en particular en el caso 4 se envían los datos por el socket.
+        - Si queremos salir tenemos el caso 5, que sirve para cerrar el socket.
 
-- p2-client.c
+## **Diagrama de comunicaciones**
 
-Para este solo utilizamos dos funciones:
-
-1. int main();
-
-2. void menu();
-
+<img src="/Server/media/Diagrama_de_comunicaciones.jpg" width="600" height="800">
