@@ -42,6 +42,7 @@ También es necesario asegurarse de tener instalada la librería ncurses. Se adj
         - Una vez se ha establecido la conexión con un cliente, se leerán los datos de búsqueda con `read()`.
         - Realizar la búsqueda indexada en los archivos binarios.
         - Almacenar el tiempo de viaje medio en `avg_travel_time` o -1 si no se encontró ningún viaje.
-        - Enviar el tiempo de viaje con `send()`.
+        - Enviar el tiempo de viaje con `send()` y registrar la acción en el archivo log `x.log()`.
+        - Cerrar el socket una vez se cierre el socket del cliente.
 
 - `p2-client.c`
