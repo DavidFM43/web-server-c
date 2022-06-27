@@ -1,7 +1,7 @@
 # Servidor 
 
 
-Practicas del curso de sistemas operativos 2022-1.
+Practica del curso de sistemas operativos 2022-1.
 
 Integrantes:
 - Juan Jose Figueroa - jufigueroap@unal.edu.co
@@ -16,7 +16,7 @@ con base a ciertos criterios basicos del mismo.
 Antes de ejecutar el programa, es necesario descargar e indexar el archivo de viajes:
 
 1. Descomprimir el archivo `rides.zip` que se encuentra en la carpeta data.
-2. Compilar el programa de preprocesamiento, para lo cual debe ir a la capeta preprocess. Este se realiza al ejecutar el comando `make`.
+2. Compilar el programa de preprocesamiento, para lo cual debe ir a la capeta `Server`. Este se realiza al ejecutar el comando `make preprocess`.
 3. Ejecutar `preprocess_data` para generar el archivo binario de estructuras.
 4. Remover los archivos innecesarios mediante el comando `make clean`
 
@@ -24,5 +24,24 @@ Tambien es necesario asegurarse de tener instalada la libreria ncurses. Se adjun
 
 **Ejecución del programa:**
 
-1. En la carpeta P1, compilar los archivos del programa ejecutando el comando `make`.
-2. Lanzas el proceso `menu` en una terminal y el proceso `server` en otra terminal.
+1. En la carpeta `Server`, compilar los archivos del programa ejecutando el comando `make`.
+2. Lanzar el proceso `menu` en una terminal y el proceso `server` en otra terminal.
+
+## **Informe de elaboración**
+
+- `p2-server.c`
+    El servidor se encarga de cargar los datos, recibir las peticiones de los clientes y devolver la información pertinente a los mismo.
+    - `int main()`
+    El flujo del programa es el siguiente:
+        - Abrir los archivos indexados de los datos de busqueda: `rides.bin`, `source_id_table.bin` que se encuentran en la carpeta `data`. También se abre el archivo log `x.log`.
+        - Declarar las variables de busqueda y sockets.
+        - Crear el socket con `socket()`.
+        - Configurar el socket con `setsockopt()` y `bind()`.
+        - Poner el socket como servidor con `listen()`.
+        - Recibir peticiones de los clientes mediante `accept()`.
+        - Una vez se ha establecido la conexión con un cliente, se leeran los datos de busqueda con `read()`.
+        - Realizar la busqueda indexada en los archivos binarios.
+        - Almacenar el tiempo de viaje medio en `avg_travel_time` o -1 si no se encontró ningun viaje.
+        - Enviar el tiempo de viaje con `send()`.
+
+- `p2-client.c`
