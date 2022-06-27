@@ -92,7 +92,7 @@ int main(int argc, char const* argv[])
         read(new_socket, arrArrival, sizeof(arrArrival)); // receive data
         time(&t);
         fprintf(f, "[Fecha %s] Cliente [%s] [%d - %d]\n", ctime(&t), inet_ntoa(address.sin_addr), arrArrival[0], arrArrival[1]); // log file info
-        printf("\n Se leyeton los datos (servidor). \n");
+        printf("\n Se leyeron los datos (servidor). \n");
 
         if (arrArrival[0] == -1) // program termination flag
         {
