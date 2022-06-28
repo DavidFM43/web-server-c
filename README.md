@@ -57,3 +57,8 @@ También es necesario asegurarse de tener instalada la librería ncurses. Se adj
 ## **Diagrama de comunicaciones**
 
 <img src="/Server/media/Diagrama_de_comunicaciones.jpg" width="600" height="800">
+
+## **Diagrama de bloques**
+
+<img src="/Server/media/Diagrama_de_bloques_1.jpg" width="600" height="800">
+
