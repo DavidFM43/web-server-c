@@ -10,20 +10,20 @@
 void csv_to_bin()
 {
 
-    FILE *fp = fopen("/data/travel_data.csv", "r");
+    FILE *fp = fopen("data/travel_data.csv", "r");
 
     if (fp == NULL)
     {
-        printf("Can't open file.\n");
+        printf("Can't open travel data file.\n");
         exit(-1);
     }
     else
     {
-        FILE *bfp = fopen("/data/rides.bin", "wb");
+        FILE *bfp = fopen("data/rides.bin", "wb");
         
         if (bfp == NULL)
 		{
-			printf("Can't open file.\n");
+			printf("Can't create file.\n");
 			exit(-1);
 		}
         char row[1024];
