@@ -1,168 +1,196 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <strings.h>
+#include <time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <strings.h>
+#include <arpa/inet.h>
+#include "ride.h"
+
 #define PORT 8080
-#define BACKLOG 3
+#define BACKLOG 32
 #define TABLE_SIZE 1200
 
-#include "ride.h"
-#include <stdlib.h>
-#include <stdbool.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <time.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <time.h>
+// #include <stdbool.h>
+// #include <sys/types.h>
+// #include <netdb.h>
+// #include <sys/time.h>
+// #include <sys/stat.h>
+// #include <errno.h>
+// #include <fcntl.h>
+
+// TODO: Handle server shutdown
+
+float search_ride(Ride ride, int client_fd, int *source_id_table, FILE *rides_data_file);
+void log_search(char *client_ip, int source_id, int dest_id, int hour);
 
 int main()
 {
-
     /* Initialize data */
-    FILE *bfp = fopen("data/rides.bin", "rb");
+    FILE *rides_data_file = fopen("data/rides.bin", "rb");
     FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
-    FILE *f = fopen("x.log", "w");
-    if (bfp == NULL || source_id_table_file == NULL || f == NULL)
+
+    int source_id_table[TABLE_SIZE];
+
+    if (rides_data_file == NULL || source_id_table_file == NULL)
     {
-        printf("Can't open files");
+        perror("Can't open files");
         exit(EXIT_FAILURE);
     }
-    // REFACTOR: This part does not look nice
-    int source_id_table[TABLE_SIZE];
+
     for (int i = 0; i < TABLE_SIZE; i++)
-    {
         source_id_table[i] = -1;
-    }
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
+    printf("Init data.\n");
+
     /* Initialize socket */
-    int serverfd, clientfd;
-    struct sockaddr_in server, client;
-    int addrlen = sizeof(client);
+    int server_fd, client_fd;
+    struct sockaddr_in server_addr, client_addr;
+    int addrlen = sizeof(client_addr);
+
+    printf("Init socket.\n");
 
     /* Configure socket address */
-    server.sin_family = AF_INET;
-    server.sin_addr.s_addr = INADDR_ANY; 
-    server.sin_port = htons(PORT);
-    bzero(server.sin_zero, 8);
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
+    bzero(server_addr.sin_zero, 8);
 
-    serverfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverfd < 0)
+    printf("Socket address configured.\n");
+
+    /* Create and configure socket */
+    server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd < 0)
     {
-        perror("socket failed");
+        perror("Socket failed");
         exit(EXIT_FAILURE);
     }
-    if (bind(serverfd, (struct sockaddr *)&server, sizeof(server)) < 0)
+    if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
     {
-        perror("bind failed.");
+        perror("Bind failed.");
         exit(EXIT_FAILURE);
     }
-    if (listen(serverfd, BACKLOG) < 0)
+    if (listen(server_fd, BACKLOG) < 0)
     {
-        perror("listen failed.");
+        perror("Listen failed.");
         exit(EXIT_FAILURE);
     }
 
-    /* Receive clients and search procedure */
-    int source_id;
-    int dest_id;
-    int hour;
-    float avg_travel_time;
-    // REFACTOR: Why not initialize and define at once
-    int infile_pos;
-    bool found;
-    int arrArrival[3];
-    pid_t pid;
-    time_t t;
-    /* REFACTOR: It is not clear right away the purpose of the while loop
-     * Maybe change for recursive function?
-     */
-    while (true)
+    printf("Socket configured.\n");
+
+    Ride ride;
+    char client_ip[INET_ADDRSTRLEN];
+
+    /* Wait for clients */
+    for (;;)
     {
-        if ((clientfd = accept(serverfd, (struct sockaddr *)&client, &addrlen)) < 0)
+        printf("Server socket waiting for client.\n");
+        client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &addrlen);
+
+        if (client_fd < 0)
         {
-            perror("failed to accept connection.");
+            perror("Failed to accept connection.");
             exit(EXIT_FAILURE);
         }
 
-        pid = fork();
-        if (pid == 0)
+        /* Get client IP address */
+        inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
+
+        printf("Connected to client from %s\n", client_ip);
+
+        if (fork() == 0)
         {
-            while (true)
+            /* search prompt loop */
+            for (;;)
             {
-                close(serverfd);
-                // receives data from user interface process
+                /* Get travel info */
+                read(client_fd, &ride, sizeof(ride));
+                printf("Ride information received.\n");
+                printf("source: %d, dest: %d, hour: %d.\n", ride.source_id, ride.dest_id, ride.hour);
 
-                read(clientfd, arrArrival, sizeof(arrArrival)); // receive data
-                // sleep(5);
-                time(&t);
-                fprintf(f, "[Fecha %s] Cliente [%s] [%d - %d]\n", ctime(&t), inet_ntoa(client.sin_addr), arrArrival[0], arrArrival[1]); // log file info
-                printf("\n Se leyeton los datos (servidor). \n");
-
-                if (arrArrival[0] == -1) // program termination flag
+                /* Close connection */
+                if (ride.source_id == -1)
                 {
-                    // close files
-                    fclose(bfp);
-                    fclose(source_id_table_file);
-                    close(clientfd);
-                    shutdown(serverfd, SHUT_RDWR);
-                    return 0;
-                }
-
-                // save arrival data on corresponding variables
-                source_id = arrArrival[0];
-                dest_id = arrArrival[1];
-                hour = arrArrival[2];
-                Ride *ride = malloc(sizeof(Ride)); // allocate memory for Ride struct
-                if (ride == NULL)
-                    exit(-1);
-
-                // start search procedure
-                if (source_id_table[source_id] == -1) // no rides with that source id
-                {
-                    avg_travel_time = -1.00;                                      // NA flag
-                    // TODO: Validate the send call
-                    send(clientfd, &avg_travel_time, sizeof(avg_travel_time), 0); // send result using socket
-                    printf("\n Se ha enviado el dato (servidor). \n");
+                    close(client_fd);
                     break;
                 }
-                else
-                {
-                    infile_pos = source_id_table[source_id];
-                    found = false;
-                    do // search through the linked list of the source ID
-                    {
-                        fseek(bfp, infile_pos, SEEK_SET);
-                        fread(ride, sizeof(Ride), 1, bfp);
-                        if (ride->hour == hour && ride->dest_id == dest_id) // checks criteria
-                        {
-                            avg_travel_time = ride->avg_time;                             // save average travel time
-                            send(clientfd, &avg_travel_time, sizeof(avg_travel_time), 0); // send result using socket
-                            printf("\n Se ha enviado el dato (servidor). \n");
-                            found = true;
-                            break;
-                        }
-                        infile_pos = ride->next_source_id;
 
-                    } while (infile_pos != -1);
+                ride.avg_time = search_ride(
+                    ride,
+                    client_fd,
+                    source_id_table,
+                    rides_data_file);
+                printf("Average travel time: %f.\n", ride.avg_time);
 
-                    if (!found)
-                    {
-                        avg_travel_time = -1.0;                                       // NA flag
-                        send(clientfd, &avg_travel_time, sizeof(avg_travel_time), 0); // send result using socket
-                        printf("\n Se ha enviado el dato (servidor). \n");
-                    }
-                }
-                free(ride);                                     // free memory from ride struct
-                read(clientfd, arrArrival, sizeof(arrArrival)); // receive flag through the socket
+                /* Send average travel time */
+                send(client_fd, &(ride.avg_time), sizeof(ride.avg_time), 0);
+                printf("Sended travel time\n");
+
+                log_search(
+                    client_ip,
+                    ride.source_id,
+                    ride.dest_id,
+                    ride.hour);
             }
-            fclose(f);
         }
     }
-    close(clientfd);
+}
+
+/* Returns the mean travel time given the ride informationor -1 if the ride was not found. */
+float search_ride(Ride ride, int client_fd, int *source_id_table, FILE *rides_data_file)
+{
+
+    if (source_id_table[ride.source_id] == -1)
+    {
+        return -1.0;
+    }
+
+    Ride temp_ride;
+    int infile_pos = source_id_table[ride.source_id];
+
+    /* Search through the linked list of the source ID */
+    do
+    {
+        fseek(rides_data_file, infile_pos, SEEK_SET);
+        fread(&temp_ride, sizeof(Ride), 1, rides_data_file);
+        if (temp_ride.hour == ride.hour && temp_ride.dest_id == ride.dest_id)
+        {
+            return temp_ride.avg_time;
+        }
+        infile_pos = temp_ride.next_source_id;
+
+    } while (infile_pos != -1);
+
+    return -1;
+}
+
+/* Saves the search information in the log file */
+void log_search(char *client_ip, int source_id, int dest_id, int hour)
+{
+    FILE *log_file = fopen("log/searchs.log", "a+");
+    if (log_file == NULL)
+    {
+        perror("Can't open log file");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Logging search\n");
+
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    fprintf(log_file,
+            "[Fecha: %d:%02d:%02d %02d:%02d:%02d] Cliente [%s], [so_id: %d - dest_id: %d - hour: %d]\n",
+            tm.tm_year + 1900,
+            tm.tm_mon + 1,
+            tm.tm_mday,
+            tm.tm_hour,
+            tm.tm_min,
+            tm.tm_sec,
+            client_ip,
+            source_id,
+            dest_id,
+            hour);
+    fclose(log_file);
 }
