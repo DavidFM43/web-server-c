@@ -7,18 +7,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "ride.h"
-
 #define PORT 8080
 #define BACKLOG 32
 #define TABLE_SIZE 1200
-
-// #include <stdbool.h>
-// #include <sys/types.h>
-// #include <netdb.h>
-// #include <sys/time.h>
-// #include <sys/stat.h>
-// #include <errno.h>
-// #include <fcntl.h>
 
 // TODO: Handle server shutdown
 
@@ -28,14 +19,14 @@ void log_search(char *client_ip, int source_id, int dest_id, int hour);
 int main()
 {
     /* Initialize data */
-    FILE *rides_data_file = fopen("data/rides.bin", "rb");
-    FILE *source_id_table_file = fopen("data/source_id_table.bin", "rb");
+    FILE *rides_data_file = fopen("data/processed/rides.bin", "rb");
+    FILE *source_id_table_file = fopen("data/processed/source_id_table.bin", "rb");
 
     int source_id_table[TABLE_SIZE];
 
     if (rides_data_file == NULL || source_id_table_file == NULL)
     {
-        perror("Can't open files");
+        perror("Can't open rides data files.");
         exit(EXIT_FAILURE);
     }
 
@@ -43,22 +34,16 @@ int main()
         source_id_table[i] = -1;
     fread(&source_id_table, sizeof(source_id_table), 1, source_id_table_file);
 
-    printf("Init data.\n");
-
     /* Initialize socket */
     int server_fd, client_fd;
     struct sockaddr_in server_addr, client_addr;
     int addrlen = sizeof(client_addr);
-
-    printf("Init socket.\n");
 
     /* Configure socket address */
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(PORT);
     bzero(server_addr.sin_zero, 8);
-
-    printf("Socket address configured.\n");
 
     /* Create and configure socket */
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -78,7 +63,7 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    printf("Socket configured.\n");
+    printf("Initialized server.\n");
 
     Ride ride;
     char client_ip[INET_ADDRSTRLEN];
@@ -86,7 +71,6 @@ int main()
     /* Wait for clients */
     for (;;)
     {
-        printf("Server socket waiting for client.\n");
         client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &addrlen);
 
         if (client_fd < 0)
@@ -98,8 +82,6 @@ int main()
         /* Get client IP address */
         inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
 
-        printf("Connected to client from %s\n", client_ip);
-
         if (fork() == 0)
         {
             /* search prompt loop */
@@ -107,8 +89,6 @@ int main()
             {
                 /* Get travel info */
                 read(client_fd, &ride, sizeof(ride));
-                printf("Ride information received.\n");
-                printf("source: %d, dest: %d, hour: %d.\n", ride.source_id, ride.dest_id, ride.hour);
 
                 /* Close connection */
                 if (ride.source_id == -1)
@@ -122,11 +102,9 @@ int main()
                     client_fd,
                     source_id_table,
                     rides_data_file);
-                printf("Average travel time: %f.\n", ride.avg_time);
 
                 /* Send average travel time */
                 send(client_fd, &(ride.avg_time), sizeof(ride.avg_time), 0);
-                printf("Sended travel time\n");
 
                 log_search(
                     client_ip,
@@ -141,7 +119,6 @@ int main()
 /* Returns the mean travel time given the ride informationor -1 if the ride was not found. */
 float search_ride(Ride ride, int client_fd, int *source_id_table, FILE *rides_data_file)
 {
-
     if (source_id_table[ride.source_id] == -1)
     {
         return -1.0;
@@ -175,8 +152,6 @@ void log_search(char *client_ip, int source_id, int dest_id, int hour)
         perror("Can't open log file");
         exit(EXIT_FAILURE);
     }
-
-    printf("Logging search\n");
 
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);

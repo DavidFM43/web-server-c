@@ -1,4 +1,7 @@
-// TODO: Clean includes
+/*
+ * Connects to the server database and displays CLI menu in order to perform queries.
+ */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -10,15 +13,6 @@
 #include <arpa/inet.h>
 #include "ride.h"
 #define PORT 8080
-
-// #include <sys/types.h>
-// #include <netdb.h>
-// #include <sys/time.h>
-// #include <time.h>
-// #include <sys/stat.h>
-// #include <errno.h>
-// #include <fcntl.h>
-// #include <ncurses.h>
 
 int goption(int min, int max);
 
@@ -35,15 +29,11 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    printf("Init socket.\n");
-
     /* Configure socket address */
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
     inet_pton(AF_INET, "127.0.0.1", &(server_addr.sin_addr));
     bzero(server_addr.sin_zero, 8);
-
-    printf("Socket address configured.\n");
 
     /* Connect to server socket */
     if (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
@@ -51,8 +41,6 @@ int main()
         perror("Connection failed.");
         exit(EXIT_FAILURE);
     }
-
-    printf("Connected to server.\n");
 
     Ride ride;
     ride.source_id = -1;
@@ -97,10 +85,8 @@ int main()
                 printf("Ingrese todos los datos.\n");
                 break;
             }
+
             // TODO: Check all the info was sended
-
-            printf("Sended ride information to server\n");
-
             send(server_fd, &ride, sizeof(ride), 0);
             read(server_fd, &ride.avg_time, sizeof(ride.avg_time));
 
@@ -109,18 +95,13 @@ int main()
             else
                 printf("El tiempo medio de viaje es: %0.2f.\n", ride.avg_time);
 
-            // initscr(); // Init alternative screen
-            // printw("\n Presione cualquier tecla para continuar. \n");
-            // refresh();
-            // getch();  // Press any key
-            // endwin(); // End alternative screen
             ride.source_id = -1;
             ride.dest_id = -1;
             ride.hour = -1;
+
             break;
 
         case 5:
-            // Sending -1 to close the program
             ride.source_id = -1;
             exit = true;
             send(server_fd, &ride, sizeof(ride), 0);
