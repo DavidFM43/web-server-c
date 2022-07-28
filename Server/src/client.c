@@ -25,8 +25,6 @@ int main()
     /* Initialize socket */
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
-    printf("socket file descriptor: %d.\n", server_fd);
-
     if (server_fd < 0)
     {
         perror("Socket failed.");

@@ -3,6 +3,9 @@
 *.csv
 */build/
 
+# log 
+*searchs.log
+
 # dotfiles
 .vscode/
 

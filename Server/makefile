@@ -6,9 +6,11 @@ source_dir = ./src/
 build_dir = ./build/
 
 run_server: server 
+	clear
 	$(build_dir)server
 
 run_client: client 
+	clear
 	$(build_dir)client
 
 data: preprocess_data 

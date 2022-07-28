@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <strings.h>
@@ -69,51 +70,69 @@ int main()
     Ride ride;
     char client_ip[INET_ADDRSTRLEN];
 
-    /* Wait for clients */
-    for (;;)
+    if (fork() == 0)
     {
-        client_fd = accept(server_fd, (SA *)&client_addr, &addrlen);
-
-        printf("socket file descriptor: %d.\n", client_fd);
-
-        if (client_fd < 0)
+        char response[100];
+        while (1)
         {
-            perror("Failed to accept connection.");
-            exit(EXIT_FAILURE);
-        }
-
-        /* Get client IP address */
-        inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
-
-        if (fork() == 0)
-        {
-            /* search prompt loop */
-            for (;;)
+            printf("Type (y) to shutdown the server.\n");
+            fgets(response, sizeof(response), stdin);
+            if (strcmp(response, "y\n") == 0)
             {
-                /* Get travel info */
-                read(client_fd, &ride, sizeof(ride));
+                printf("Shutting down server.\n");
+                fclose(rides_data_file);
+                fclose(source_id_table_file);
+                shutdown(server_fd, SHUT_RDWR);
+                break;
+            }
+        }
+    }
+    else
+    {
+        /* Wait for clients */
+        for (;;)
+        {
+            client_fd = accept(server_fd, (SA *)&client_addr, &addrlen);
 
-                /* Close connection */
-                if (ride.source_id == -1)
+            if (client_fd < 0)
+            {
+                perror("Failed to accept connection.");
+                exit(EXIT_FAILURE);
+            }
+
+            /* Get client IP address */
+            inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
+
+            if (fork() == 0)
+            {
+                /* search prompt loop */
+                for (;;)
                 {
-                    close(client_fd);
-                    break;
+                    /* Get travel info */
+                    read(client_fd, &ride, sizeof(ride));
+
+                    /* Close connection */
+                    if (ride.source_id == -1)
+                    {
+                        close(client_fd);
+                        break;
+                    }
+
+                    ride.avg_time = search_ride(
+                        ride,
+                        client_fd,
+                        source_id_table,
+                        rides_data_file);
+
+                    /* Send average travel time */
+                    send(client_fd, &(ride.avg_time), sizeof(ride.avg_time), 0);
+
+                    log_search(
+                        client_ip,
+                        ride.source_id,
+                        ride.dest_id,
+                        ride.hour);
                 }
-
-                ride.avg_time = search_ride(
-                    ride,
-                    client_fd,
-                    source_id_table,
-                    rides_data_file);
-
-                /* Send average travel time */
-                send(client_fd, &(ride.avg_time), sizeof(ride.avg_time), 0);
-
-                log_search(
-                    client_ip,
-                    ride.source_id,
-                    ride.dest_id,
-                    ride.hour);
             }
         }
     }
