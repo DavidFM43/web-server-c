@@ -12,6 +12,7 @@ Integrantes:
 
 This program manages Uber-Movement trips information, specifically, it provides a CLI for the user to query the average time of a trip based on certain basic trip criteria.
 ## **Usage**
+First to the Server folder: 
 1. Process data.
 ```bash
 make data

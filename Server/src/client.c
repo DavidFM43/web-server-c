@@ -12,6 +12,7 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include "ride.h"
+#define SA struct sockaddr_in
 #define PORT 8080
 
 int goption(int min, int max);
@@ -23,6 +24,9 @@ int main()
 
     /* Initialize socket */
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+    printf("socket file descriptor: %d.\n", server_fd);
+
     if (server_fd < 0)
     {
         perror("Socket failed.");
@@ -36,7 +40,7 @@ int main()
     bzero(server_addr.sin_zero, 8);
 
     /* Connect to server socket */
-    if (connect(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    if (connect(server_fd, (SA *)&server_addr, sizeof(server_addr)) < 0)
     {
         perror("Connection failed.");
         exit(EXIT_FAILURE);

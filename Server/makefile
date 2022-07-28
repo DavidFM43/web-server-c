@@ -28,7 +28,9 @@ index: $(preprocess_dir)index_data.c
 	$(CC) $(CFLAGS) -o $(preprocess_dir)index $(preprocess_dir)index_data.c
 
 unzip: ./data/raw/travel_data.csv.zip
+ifeq (,$(wildcard ./data/raw/travel_data.csv))
 	unzip ./data/raw/travel_data.csv.zip -d data/raw
+endif
 
 transform: $(preprocess_dir)csv_to_bin.c
 	$(CC) $(CFLAGS) -o $(preprocess_dir)transform $(preprocess_dir)csv_to_bin.c

@@ -1,35 +1,10 @@
-#base
-.gitignore
-informe.md
-
-# rides csv data
-travel_data.csv
-
-# testing 
-structs_testing.c
-test.c
-
-# binaries
-
-search
-menu
-indexer
-structs_testing
-search_testing
-csv_to_bin
-p1-odProgram
-
-rides.bin
-source_id_heads.bin
+# data files
+*.bin
+*.csv
+*/build/
 
 # dotfiles
 .vscode/
-
-# Pruebas del parcial 
-CountTime
-
-#Mejoras
-Tareas
 
 # IPC
 
@@ -39,6 +14,4 @@ IPC/Shm/producer
 IPC/Shm/shm.sh
 IPC/test_open
 IPC/test_open.c
-
 IPC/archivos/Archivo.bin
-

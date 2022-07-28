@@ -9,6 +9,7 @@
 #include "ride.h"
 #define PORT 8080
 #define BACKLOG 32
+#define SA struct sockaddr_in
 #define TABLE_SIZE 1200
 
 // TODO: Handle server shutdown
@@ -52,7 +53,7 @@ int main()
         perror("Socket failed");
         exit(EXIT_FAILURE);
     }
-    if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    if (bind(server_fd, (SA *)&server_addr, sizeof(server_addr)) < 0)
     {
         perror("Bind failed.");
         exit(EXIT_FAILURE);
@@ -71,7 +72,9 @@ int main()
     /* Wait for clients */
     for (;;)
     {
-        client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &addrlen);
+        client_fd = accept(server_fd, (SA *)&client_addr, &addrlen);
+
+        printf("socket file descriptor: %d.\n", client_fd);
 
         if (client_fd < 0)
         {
