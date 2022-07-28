@@ -5,6 +5,7 @@ preprocess_dir = ./src/preprocess/
 source_dir = ./src/
 build_dir = ./build/
 
+
 run_server: server 
 	clear
 	$(build_dir)server
@@ -34,8 +35,8 @@ ifeq (,$(wildcard ./data/raw/travel_data.csv))
 	unzip ./data/raw/travel_data.csv.zip -d data/raw
 endif
 
-transform: $(preprocess_dir)csv_to_bin.c
-	$(CC) $(CFLAGS) -o $(preprocess_dir)transform $(preprocess_dir)csv_to_bin.c
+transform: $(preprocess_dir)csv2bin.c
+	$(CC) $(CFLAGS) -o $(preprocess_dir)transform $(preprocess_dir)csv2bin.c
 
 clean:
 	rm ./data/processed/rides.bin ./data/processed/source_id_table.bin

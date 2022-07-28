@@ -8,9 +8,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "ride.h"
-#define PORT 8080
+#define SERVER_PORT 8080
 #define BACKLOG 32
-#define SA struct sockaddr_in
+#define SA struct sockaddr
 #define TABLE_SIZE 1200
 
 // TODO: Handle server shutdown
@@ -39,13 +39,13 @@ int main()
     /* Initialize socket */
     int server_fd, client_fd;
     struct sockaddr_in server_addr, client_addr;
-    int addrlen = sizeof(client_addr);
+    socklen_t addrlen = sizeof(client_addr);
 
     /* Configure socket address */
+    bzero(&server_addr, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
-    bzero(server_addr.sin_zero, 8);
+    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    server_addr.sin_port = htons(SERVER_PORT);
 
     /* Create and configure socket */
     server_fd = socket(AF_INET, SOCK_STREAM, 0);

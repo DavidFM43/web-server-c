@@ -12,8 +12,8 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include "ride.h"
-#define SA struct sockaddr_in
-#define PORT 8080
+#define SA struct sockaddr
+#define SERVER_PORT 8080
 
 int goption(int min, int max);
 
@@ -33,7 +33,7 @@ int main()
 
     /* Configure socket address */
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(SERVER_PORT);
     inet_pton(AF_INET, "127.0.0.1", &(server_addr.sin_addr));
     bzero(server_addr.sin_zero, 8);
 
