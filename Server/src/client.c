@@ -57,12 +57,12 @@ int main()
     {
 
         printf("\n");
-        printf("Por favor seleccione una de las siguientes opciones:\n");
-        printf("1. Ingresar origen\n");
-        printf("2. Ingresar destino\n");
-        printf("3. Ingresar hora\n");
-        printf("4. Buscar tiempo de viaje medio\n");
-        printf("5. Salir\n");
+        printf("Select one of the following options:\n");
+        printf("1. Select ride origin ID\n");
+        printf("2. Select ride destination ID\n");
+        printf("3. Select hour\n");
+        printf("4. Search average travel time\n");
+        printf("5. Exit\n");
 
         option = goption(1, 5);
 
@@ -70,21 +70,21 @@ int main()
         {
 
         case 1:
-            printf("Ingrese ID del origen: ");
+            printf("Select ride origin ID (1 - 1160): \n");
             ride.source_id = goption(1, 1160);
             break;
         case 2:
-            printf("Ingrese ID de destino: ");
+            printf("Select ride destination ID (1 - 1160): \n");
             ride.dest_id = goption(1, 1160);
             break;
         case 3:
-            printf("Ingrese hora del dia: ");
+            printf("Select hour (0 - 23): \n");
             ride.hour = goption(0, 23);
             break;
         case 4:
             if (ride.source_id == -1 || ride.dest_id == -1 || ride.hour == -1)
             {
-                printf("Ingrese todos los datos.\n");
+                printf("Please fill all the ride information.\n");
                 break;
             }
 
@@ -93,9 +93,9 @@ int main()
             read(server_fd, &ride.avg_time, sizeof(ride.avg_time));
 
             if (ride.avg_time < 0)
-                printf("No se han un viaje con las caracteristicas deseadas.\n");
+                printf("There is not a ride with the desired specifications.\n");
             else
-                printf("El tiempo medio de viaje es: %0.2f.\n", ride.avg_time);
+                printf("The average travel time is: %0.2f.\n", ride.avg_time);
 
             ride.source_id = -1;
             ride.dest_id = -1;
@@ -128,11 +128,14 @@ int goption(int min, int max)
 
         if (remaining[0] == '\n')
             if (option >= min && option <= max)
+            {
+                printf("\n");
                 break;
+            }
             else
-                printf("Inserte un número entre %d y %d.\n", min, max);
+                printf("Select a number between %d y %d.\n", min, max);
         else
-            printf("Inserte una opción adecuada.\n");
+            printf("Select a correct option.\n");
     }
     return option;
 }
