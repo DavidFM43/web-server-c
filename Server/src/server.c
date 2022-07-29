@@ -13,7 +13,6 @@
 #define SA struct sockaddr
 #define TABLE_SIZE 1200
 
-// TODO: Handle server shutdown
 
 float search_ride(Ride ride, int client_fd, int *source_id_table, FILE *rides_data_file);
 void log_search(char *client_ip, int source_id, int dest_id, int hour);

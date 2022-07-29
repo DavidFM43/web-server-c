@@ -1,7 +1,7 @@
 # data files
 *.bin
 *.csv
-*/build/
+*/bin/
 
 # log 
 *searchs.log
