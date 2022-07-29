@@ -1,14 +1,13 @@
 # Web Server in C
 
-![cli_demo](Server/demo/demo.gif)
+![cli_demo](demo/demo.gif)
 
 # **Description**
 
 This program manages Uber-Movement trips information, specifically, it provides a CLI tool to query the average time of a trip based on certain basic trip criteria, namely the ID of the origin location, ID of the destination location and hour of the day.
 
 ## **Usage**
-First to the Server folder: 
-1. Process data.
+1. Process the data.
 ```bash
 make data
 ```
