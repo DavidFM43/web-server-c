@@ -1,16 +1,11 @@
 # Web Server in C
 
-Practica del curso de sistemas operativos 2022-1.
-
-Integrantes:
-- Juan Jose Figueroa - jufigueroap@unal.edu.co
-- Eduards Mendez - emendezc@unal.edu.co
-- David Felipe Mora - dmorara@unal.edu.co
-
+![cli_demo](Server/demo/demo.gif)
 
 # **Description**
 
-This program manages Uber-Movement trips information, specifically, it provides a CLI for the user to query the average time of a trip based on certain basic trip criteria.
+This program manages Uber-Movement trips information, specifically, it provides a CLI tool to query the average time of a trip based on certain basic trip criteria, namely the ID of the origin location, ID of the destination location and hour of the day.
+
 ## **Usage**
 First to the Server folder: 
 1. Process data.

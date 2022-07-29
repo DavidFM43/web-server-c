@@ -3,7 +3,7 @@ CFLAGS=-g -Wall
 
 preprocess_dir = ./src/preprocess/
 source_dir = ./src/
-build_dir = ./build/
+build_dir = ./bin/
 
 
 run_server: server 
